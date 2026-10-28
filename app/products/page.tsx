@@ -17,7 +17,7 @@ export default function ProductsPage() {
       <PageHero
         trail={[{ name: 'Products', href: '/products' }]}
         eyebrow="PRODUCTS"
-        title={<Headline lead="Product pathways from the" accent="Axilabz Labz" />}
+        title={<Headline lead="Product pathways from the" accent="Axilabz" />}
         intro="AxiDoc, AxiCore and AxiData address recurring problems in documents, AI engineering and data access. AxiVoice is under research. For anything else, AxiSolve is our custom-solution pathway."
         actions={<Button href="/contact" event="cta_click" location="products-hero">Talk to us</Button>}
       />
