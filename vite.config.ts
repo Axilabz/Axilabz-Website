@@ -1,5 +1,5 @@
 import vinext from "vinext";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { readExecutionProfile } from "./scripts/execution-profile.mjs";
 import { configureToolEnvironment } from "./scripts/tool-environment.mjs";
@@ -37,11 +37,8 @@ const localBindingConfig = {
     : [],
 };
 
-export default defineConfig(async ({ command, mode }) => {
+export default defineConfig(async ({ command }) => {
   configureToolEnvironment(process.cwd());
-
-  // Load .env so Firebase secrets are available in the Worker bundle.
-  const env = loadEnv(mode, process.cwd(), '');
 
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.
   const { cloudflare } = await import("@cloudflare/vite-plugin");
@@ -51,17 +48,6 @@ export default defineConfig(async ({ command, mode }) => {
     // dev made it re-optimise on the first click and reload the page mid-navigation,
     // so links appeared not to open. Serving it unbundled avoids that.
     optimizeDeps: { exclude: ["lucide-react"] },
-    // Inject Firebase secrets into the server Worker bundle.
-    define: {
-      'process.env.NEXT_PUBLIC_SITE_URL': JSON.stringify(env.NEXT_PUBLIC_SITE_URL ?? ''),
-      'process.env.FIREBASE_PROJECT_ID': JSON.stringify(env.FIREBASE_PROJECT_ID ?? ''),
-      'process.env.FIREBASE_CLIENT_EMAIL': JSON.stringify(env.FIREBASE_CLIENT_EMAIL ?? ''),
-      'process.env.FIREBASE_PRIVATE_KEY': JSON.stringify(env.FIREBASE_PRIVATE_KEY ?? ''),
-      'process.env.RESEND_API_KEY': JSON.stringify(env.RESEND_API_KEY ?? ''),
-      'process.env.CONTACT_FROM': JSON.stringify(env.CONTACT_FROM ?? ''),
-      'process.env.CONTACT_NOTIFY_TO': JSON.stringify(env.CONTACT_NOTIFY_TO ?? ''),
-      'process.env.CONTACT_HASH_SALT': JSON.stringify(env.CONTACT_HASH_SALT ?? ''),
-    },
     server: {
       ...(managedLinux
         ? { host: "0.0.0.0", allowedHosts: ["terminal.local"] }
