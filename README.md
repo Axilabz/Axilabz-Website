@@ -34,7 +34,7 @@ See `.env.example`. Public values are inlined at build time; secrets are Worker 
 | --- | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | public | Verified production origin. Drives canonicals, Open Graph, JSON-LD, `robots.txt`, `sitemap.xml`. If unset, the sitemap returns 404 so no guessed or preview URLs are published. |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | public, optional | Verified contact email shown in footer/privacy/JSON-LD. |
-| `NEXT_PUBLIC_CAREERS_EMAIL` | public, optional | Where the careers page "Apply" button sends mail. Defaults to `axilabzoff@gmail.com`. |
+| `NEXT_PUBLIC_CAREERS_EMAIL` | public, optional | Where the careers page "Apply" button sends mail. Defaults to `axilabzoffl@gmail.com`. |
 | `NEXT_PUBLIC_GA_ID` | public, optional | GA4 ID. Script loads only after the visitor accepts the consent banner. |
 | `RESEND_API_KEY`, `CONTACT_FROM` | secret | Transactional email for new enquiries (Resend). Without both, enquiries are stored with `notify_status = 'skipped'`. |
 | `CONTACT_NOTIFY_TO` | optional | Recipient inbox(es). Defaults to `axilabzoffl@gmail.com`. |

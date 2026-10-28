@@ -18,7 +18,7 @@ export const SITE = {
     address: undefined as string | undefined,
   },
   /** Where job applications are sent (opens the visitor's mail app). Override with NEXT_PUBLIC_CAREERS_EMAIL. */
-  careersEmail: process.env.NEXT_PUBLIC_CAREERS_EMAIL || 'axilabzoff@gmail.com',
+  careersEmail: process.env.NEXT_PUBLIC_CAREERS_EMAIL || 'axilabzoffl@gmail.com',
   /** Verified social profile URLs (used for Organization.sameAs). */
   social: [] as string[],
 } as const;
