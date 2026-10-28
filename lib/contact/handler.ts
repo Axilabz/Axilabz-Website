@@ -108,8 +108,8 @@ export async function handleContact(request: Request, deps: ContactDeps): Promis
       deps.log('contact.duplicate');
       return json({ ok: true });
     }
-  } catch {
-    deps.log('contact.store_failed');
+  } catch (err) {
+    deps.log('contact.store_failed', { error: String(err) });
     return json({ error: 'Unable to save your enquiry. Please try again.' }, 503);
   }
 
