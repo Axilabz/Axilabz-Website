@@ -7,6 +7,8 @@
  */
 export const SITE = {
   name: 'Axilabz',
+  /** Common alternative spellings searchers use; emitted as schema.org alternateName. */
+  alternateNames: ['Axilabs'],
   tagline: 'Accelerating excellent innovations',
   description:
     'Axilabz is an AI engineering and software solutions company. We help businesses build intelligent applications, automate complex workflows and develop scalable software.',

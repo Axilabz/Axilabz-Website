@@ -10,7 +10,7 @@ import { Icon } from '@/components/site/Icon';
 export const metadata: Metadata = pageMetadata({
   title: 'AI Engineering & Software Solutions',
   description:
-    'Axilabz helps businesses build intelligent applications, automate complex workflows and develop scalable software, from strategy and engineering to deployment and improvement.',
+    'Axilabz (also written Axilabs) helps businesses build intelligent applications, automate complex workflows and develop scalable software, from strategy and engineering to deployment and improvement.',
   path: '/',
 });
 

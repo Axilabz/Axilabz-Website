@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from '@/components/site/Link';
-import { pageMetadata } from '@/lib/seo';
-import { PageHero, Section, CtaBand, Button, Headline } from '@/components/site/ui';
+import { pageMetadata, faqLd } from '@/lib/seo';
+import { PageHero, Section, CtaBand, Button, Headline, FaqList } from '@/components/site/ui';
 import { Icon } from '@/components/site/Icon';
+import { JsonLd } from '@/components/site/JsonLd';
 
 export const metadata: Metadata = pageMetadata({
   title: 'About Axilabz',
@@ -18,6 +19,11 @@ const values = [
   { icon: 'users', title: 'Your team stays in control', text: 'We design for handover, with systems your people can understand, operate and change.' },
 ] as const;
 
+const faqs = [
+  { q: 'Is Axilabs the same as Axilabz?', a: 'Yes. Axilabs is a common alternative spelling of our name. We are Axilabz, an AI engineering and software solutions company, and our website is www.axilabz.com.' },
+  { q: 'What does Axilabz do?', a: 'We help businesses build intelligent applications, automate complex workflows and develop scalable software, from strategy and engineering through to deployment and monitoring.' },
+];
+
 export default function AboutPage() {
   return (
     <>
@@ -32,7 +38,7 @@ export default function AboutPage() {
       <Section id="what" title="What we do" eyebrow="COMPANY">
         <div className="two-col">
           <div className="prose">
-            <p>We are an AI engineering and software solutions company. Our work spans strategy and feasibility, AI agents and retrieval systems, document and voice intelligence, custom software and web applications, data engineering, workflow automation, and the deployment and monitoring needed to keep AI systems reliable.</p>
+            <p>We are Axilabz, an AI engineering and software solutions company, sometimes written Axilabs. Our work spans strategy and feasibility, AI agents and retrieval systems, document and voice intelligence, custom software and web applications, data engineering, workflow automation, and the deployment and monitoring needed to keep AI systems reliable.</p>
             <p>We also develop product pathways in the Labz: AxiDoc for document extraction, AxiCore for AI application engineering and AxiData for asking questions of your data, with AxiSolve for custom solutions.</p>
           </div>
           <div className="grid grid-2">
@@ -67,7 +73,12 @@ export default function AboutPage() {
         </div>
       </Section>
 
+      <Section id="faq" title="Frequently asked questions">
+        <FaqList faqs={faqs} />
+      </Section>
+
       <CtaBand label="Start a conversation" location="about-bottom" />
+      <JsonLd data={faqLd(faqs)} />
     </>
   );
 }
