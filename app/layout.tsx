@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: { default: 'Axilabz — AI Engineering & Software Solutions', template: '%s | Axilabz' },
   description: SITE.description,
   applicationName: SITE.name,
-  icons: { icon: [{ url: '/favicon-48.png', sizes: '48x48', type: 'image/png' }, { url: '/brand/axilabz-icon-256.png', sizes: '256x256', type: 'image/png' }], apple: '/brand/axilabz-icon-256.png' },
+  icons: { icon: [{ url: '/favicon.ico', sizes: 'any' }, { url: '/favicon-48.png', sizes: '48x48', type: 'image/png' }, { url: '/brand/axilabz-icon-256.png', sizes: '256x256', type: 'image/png' }], apple: '/apple-touch-icon.png' },
 };
 
 export const viewport: Viewport = { themeColor: '#ffffff', width: 'device-width', initialScale: 1 };
