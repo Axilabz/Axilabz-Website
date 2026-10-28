@@ -53,6 +53,7 @@ export default defineConfig(async ({ command, mode }) => {
     optimizeDeps: { exclude: ["lucide-react"] },
     // Inject Firebase secrets into the server Worker bundle.
     define: {
+      'process.env.NEXT_PUBLIC_SITE_URL': JSON.stringify(env.NEXT_PUBLIC_SITE_URL ?? ''),
       'process.env.FIREBASE_PROJECT_ID': JSON.stringify(env.FIREBASE_PROJECT_ID ?? ''),
       'process.env.FIREBASE_CLIENT_EMAIL': JSON.stringify(env.FIREBASE_CLIENT_EMAIL ?? ''),
       'process.env.FIREBASE_PRIVATE_KEY': JSON.stringify(env.FIREBASE_PRIVATE_KEY ?? ''),
