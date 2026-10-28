@@ -5,9 +5,9 @@
  * never flashes), and a CSS fail-safe hides it after 7s even if the script never runs.
  */
 const css = `
-#page-loader{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#fff 0,#f1f5ff 65%,#e6edff 100%);transition:opacity .55s ease,visibility .55s;animation:pl-failsafe .5s ease 7s forwards}
-#page-loader.is-done{opacity:0;visibility:hidden}
-#page-loader[hidden]{display:none}
+#page-loader{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#fff 0,#f1f5ff 65%,#e6edff 100%);transition:opacity .55s ease,visibility .55s;pointer-events:none;animation:pl-failsafe .5s ease 4s forwards}
+#page-loader.is-done{opacity:0;visibility:hidden;pointer-events:none}
+#page-loader[hidden]{display:none;pointer-events:none}
 .pl-stage{display:grid;justify-items:center;gap:26px;perspective:700px}
 .pl-mark{width:min(40vw,180px);transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .18s ease-out;cursor:pointer;touch-action:manipulation;filter:drop-shadow(0 16px 22px rgba(35,64,200,.28))}
 .pl-mark svg{display:block;width:100%;height:auto;overflow:visible}
@@ -31,7 +31,7 @@ const script = `(function(){var el=document.getElementById('page-loader');if(!el
 function hide(){if(done)return;done=true;el.classList.add('is-done');setTimeout(function(){el.setAttribute('hidden','')},700)}
 function ready(){setTimeout(hide,Math.max(0,900-(Date.now()-t0)))}
 if(document.readyState==='complete')ready();else window.addEventListener('load',ready);
-setTimeout(hide,6000);
+setTimeout(hide,3000);
 el.addEventListener('pointermove',function(e){var x=e.clientX/window.innerWidth-.5,y=e.clientY/window.innerHeight-.5;el.style.setProperty('--rx',(-y*24)+'deg');el.style.setProperty('--ry',(x*30)+'deg')});
 var m=el.querySelector('.pl-mark');if(m)m.addEventListener('click',function(){m.classList.remove('pl-pop');void m.offsetWidth;m.classList.add('pl-pop')});
 })();`;
