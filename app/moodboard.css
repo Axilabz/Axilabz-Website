@@ -1,0 +1,171 @@
+/* ================= Moodboard: Cobalt & Amber / Precision Lab =================
+   Midnight #0B1020, Paper #F4F2EB, Cobalt #2340C8, Amber #FFB020 (the single signal).
+   Fonts: Bricolage Grotesque (headlines), Hanken Grotesk (body), JetBrains Mono (labels),
+   Instrument Serif italic (one accent word per headline). Self-hosted, latin subset, OFL.
+   The legacy stylesheet names 'DM Sans' (body) and 'Manrope' (headlines); they now resolve
+   to Hanken Grotesk and Bricolage Grotesque. */
+@font-face { font-family: 'Bricolage Grotesque'; font-style: normal; font-weight: 500 800; font-display: swap; src: url('/fonts/bricolage-grotesque.woff2') format('woff2'); }
+@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 400 800; font-display: swap; src: url('/fonts/bricolage-grotesque.woff2') format('woff2'); }
+@font-face { font-family: 'Hanken Grotesk'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/fonts/hanken-grotesk.woff2') format('woff2'); }
+@font-face { font-family: 'DM Sans'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('/fonts/hanken-grotesk.woff2') format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('/fonts/jetbrains-mono.woff2') format('woff2'); }
+@font-face { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; font-display: swap; src: url('/fonts/instrument-serif-italic.woff2') format('woff2'); }
+
+:root { --navy: #0b1020; --paper: #f4f2eb; --cobalt: #2340c8; --amber-signal: #ffb020; --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace; --serif-accent: 'Instrument Serif', Georgia, serif; }
+.sec-tint { background: var(--paper); border-block-color: #e7e3d8; }
+
+/* Mono labels */
+.eyebrow,.flow figcaption,.badge { font-family: var(--mono); letter-spacing: 0.08em; }
+.eyebrow { font-size: 11px; text-transform: uppercase; }
+.meta { font-family: var(--mono); font-size: 12px; }
+
+/* One italic serif accent word per page headline */
+.ph h1 span { font-family: var(--serif-accent); font-style: italic; font-weight: 400; letter-spacing: -0.01em; font-size: 1.08em; color: var(--cobalt); }
+.ph-dark h1 span { color: #8fa9ff; }
+
+/* Buttons: amber is the single signal; cobalt for the header action */
+.button.primary { background: var(--amber-signal); color: var(--navy); box-shadow: none; font-weight: 650; }
+.button.primary:hover { background: #ffc149; box-shadow: none; }
+.button.secondary { background: #fff; border: 1px solid var(--navy); color: var(--navy); }
+.button.secondary:hover { background: var(--paper); border-color: var(--navy); }
+.gh-cta { background: var(--cobalt); }
+.gh-cta:hover { background: #1a309f; }
+.cta-band .button { background: var(--amber-signal); color: var(--navy); }
+.cta-band .button:hover { background: #ffc149; }
+.text-link { color: var(--cobalt); text-decoration: underline; text-underline-offset: 4px; }
+
+/* Amber plus grid on heroes, navy sections and the CTA band */
+.ph::before, .cta-band::before, .sec-navy::before {
+  content: ''; position: absolute; pointer-events: none; width: min(46vw, 528px); height: min(46vw, 528px);
+  right: 0; top: 0; background: url('/art/plus-grid.svg') right top / contain no-repeat; opacity: 0.5;
+  -webkit-mask-image: linear-gradient(225deg, #000 15%, transparent 75%); mask-image: linear-gradient(225deg, #000 15%, transparent 75%);
+}
+.ph-dark::before, .cta-band::before, .sec-navy::before { opacity: 0.8; }
+.sec-navy { position: relative; overflow: hidden; }
+.sec-navy > .container, .ph > .container { position: relative; z-index: 1; }
+@media (max-width: 700px) { .ph::before { width: 60vw; height: 60vw; opacity: 0.35; } }
+
+/* Flat diagram, framed screenshot, chips */
+.flat-panel { background: #eceae3; border-radius: var(--radius); padding: 28px; display: grid; gap: 22px; }
+.flat-panel .eyebrow { margin-bottom: 4px; }
+.dflow { margin: 0; }
+.dflow ol { list-style: none; display: flex; align-items: center; gap: 26px; }
+.dflow li { position: relative; flex: 1 1 0; min-width: 0; text-align: center; padding: 16px 12px; border-radius: 10px; font-weight: 650; font-size: 15px; border: 1.5px solid var(--navy); }
+.dflow li:not(:last-child)::after { content: ''; position: absolute; left: 100%; top: 50%; width: 26px; height: 2px; background: var(--cobalt); transform: translateY(-50%); }
+.df-light { background: #fff; color: var(--navy); }
+.df-cobalt { background: var(--cobalt); border-color: var(--cobalt) !important; color: #fff; }
+.df-dark { background: var(--navy); color: #fff; }
+@media (max-width: 520px) { .dflow ol { flex-direction: column; gap: 22px; } .dflow li { width: 100%; } .dflow li:not(:last-child)::after { left: 50%; top: 100%; width: 2px; height: 22px; transform: translateX(-50%); } }
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.chips a { display: inline-block; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; padding: 8px 14px; border-radius: 20px; background: #e6ebff; color: var(--cobalt); }
+.chips a:hover { background: var(--cobalt); color: #fff; }
+
+/* ---------- Round of fixes ---------- */
+/* Services: two equal columns, every card the same size and layout */
+.svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; align-items: stretch; }
+.svc, .svc-feature, .svc-compact { grid-column: auto; padding: 28px; background: #fff; }
+.svc h3, .svc-feature h3 { font-size: 22px; }
+@media (max-width: 700px) { .svc-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Amber icons inside the dark icon tiles */
+.product-icon, .svc-icon { color: var(--amber-signal); }
+.product-icon svg, .svc-icon svg { stroke-width: 1.7; }
+
+/* AxiSolve: the "Not listed?" label sits directly above the button */
+.products-grid .solve-card { padding-top: 22px; }
+.solve-label { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; color: #8a5200; margin: auto 0 8px; }
+.products-grid .solve-card .dark { margin-top: 0; }
+
+/* Mobile menu: a backdrop-filter on the header turned it into the containing block of the fixed menu
+   panel, collapsing the open menu to nothing. No filter on small screens; solid background instead. */
+@media (max-width: 1040px) {
+  .gh, html[data-scrolled] .gh, .gh.is-open { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  html[data-scrolled] .gh, .gh.is-open { background: #f9fbff; }
+  .gh-nav { z-index: 60; height: calc(100dvh - 72px); }
+}
+
+/* Header colour changes the instant the page scrolls (no delayed fade) */
+.gh { transition: none; }
+
+/* Labz: the section is as tall as the whole graphic (desktop), so nothing is clipped */
+@media (min-width: 601px) {
+  .labz-chapter { min-height: calc(var(--labz-hvw, 36) * 1vw + 16px); }
+}
+
+/* Product illustrations keep their true aspect ratio (no stretching, no layout shift) */
+.product-art img { height: auto !important; aspect-ratio: 332 / 148; object-fit: contain; }
+
+/* ---------- Mobile floating "Book a Free Strategy Call" button + form dialog ---------- */
+.fab { display: none; }
+@media (max-width: 1040px) {
+  .fab { display: inline-flex; align-items: center; justify-content: center; position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 40;
+    width: 58px; height: 58px; border-radius: 50%; border: 0; padding: 0; background: var(--amber-signal); color: var(--navy);
+    box-shadow: 0 10px 26px #0b102044, 0 2px 6px #0b102033; opacity: 0; visibility: hidden; transform: translateY(14px) scale(0.9);
+    transition: opacity 0.2s, transform 0.2s, visibility 0.2s; }
+  .fab.is-visible { opacity: 1; visibility: visible; transform: none; }
+  .fab:hover { background: #ffc149; }
+  .fab svg { width: 26px; height: 26px; }
+}
+.fab-dialog { border: 0; padding: 20px 18px 24px; border-radius: 18px; width: calc(100% - 24px); max-width: 560px; max-height: 92dvh; overflow-y: auto; color: var(--navy); background: #fff; box-shadow: 0 30px 90px #081a4755; }
+.fab-dialog::backdrop { background: #06112a88; backdrop-filter: blur(4px); }
+.fab-dialog:not([open]) { display: none; }
+.fab-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.fab-dialog-head h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.fab-close { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: #fff; color: var(--navy); padding: 0; flex-shrink: 0; }
+.fab-close svg { width: 20px; height: 20px; }
+.fab-dialog-intro { font-size: 14.5px; line-height: 1.6; color: var(--muted); margin: 6px 0 16px; }
+.fab-dialog .contact-form { padding: 0; border: 0; box-shadow: none; background: transparent; }
+.fab-dialog .form-row { grid-template-columns: 1fr; gap: 0; }
+.fab-dialog .form-success { min-height: 0; padding: 24px 8px; background: transparent; border: 0; }
+
+/* ---------- No visible scrollbars anywhere (scrolling itself still works: wheel, touch, keyboard) ---------- */
+html, body, * { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { display: none; width: 0; height: 0; background: transparent; }
+
+/* Product under research: calm, non-interactive card */
+.product-card.is-research { background: #fbfbfd; }
+.product-card.is-research:hover { transform: none; box-shadow: none; border-color: #e3e8f2; }
+.badge-research { background: #eef0f6; color: #4a5675; border-color: #d5dae8; }
+
+/* Grouped Services menu */
+.gh-sections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 22px; width: 600px; padding: 6px 6px 2px; }
+.gh-section-title { margin: 0 0 4px 12px; font-family: var(--mono, monospace); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber-signal, #b9770a); }
+@media (max-width: 1000px) {
+  .gh-sections { grid-template-columns: minmax(0, 1fr); width: auto; gap: 10px; padding: 0; }
+  .gh-section-title { margin-left: 10px; }
+}
+
+/* Services page groups */
+.svc-group + .svc-group { margin-top: 56px; }
+.svc-group-head { display: grid; gap: 4px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.svc-group-head h3 { font-family: Manrope, sans-serif; font-size: 22px; letter-spacing: -0.02em; }
+.svc-group-head p { color: var(--muted); font-size: 15px; }
+.svc-group .svc-grid.one { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 701px) { .svc-group .svc-grid.one { grid-template-columns: repeat(2, minmax(0, 1fr)); } .svc-group .svc-grid.one > .svc:only-child { grid-column: 1 / -1; } }
+
+/* Products grid: three on the first row, two wider cards below, so every row is full */
+@media (min-width: 1201px) {
+  .products-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .products-grid > * { grid-column: span 2; }
+  .products-grid > *:nth-last-child(-n+2):nth-child(3n+1), .products-grid > *:nth-last-child(-n+2):nth-child(3n+2) { grid-column: span 3; }
+}
+@media (min-width: 1001px) { .svc-group .svc-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* Careers */
+.careers-h { font-family: Manrope, sans-serif; font-size: 18px; margin: 0 0 12px; }
+.careers-h:not(:first-child) { margin-top: 28px; }
+.careers-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.careers-steps li { display: flex; gap: 12px; align-items: flex-start; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+.careers-steps li > span { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; }
+.careers-steps p { margin: 4px 0 0; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+.careers-note { margin-top: 20px; color: var(--muted); font-size: 14.5px; }
+@media (max-width: 1000px) { .careers-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .careers-steps { grid-template-columns: minmax(0, 1fr); } }
+.gh-col { display: grid; gap: 14px; align-content: start; }
+@media (max-width: 1000px) { .gh-col { gap: 10px; } }
+
+/* On wide screens all products sit on one row */
+@media (min-width: 1280px) {
+  .products-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .products-grid > *, .products-grid > *:nth-last-child(-n+2):nth-child(3n+1), .products-grid > *:nth-last-child(-n+2):nth-child(3n+2) { grid-column: span 1; }
+}
