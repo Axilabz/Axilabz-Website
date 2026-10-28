@@ -18,7 +18,7 @@ export function createMailSender(cfg: MailConfig, fetchImpl: typeof fetch = fetc
     const res = await fetchImpl('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${cfg.apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: cfg.from, to: recipients, reply_to: mail.replyTo, subject: mail.subject, text: mail.text }),
+      body: JSON.stringify({ from: cfg.from, to: recipients, reply_to: mail.replyTo, subject: mail.subject, text: mail.text, html: mail.html }),
     });
     if (!res.ok) throw new Error(`mail provider status ${res.status}`);
   };
