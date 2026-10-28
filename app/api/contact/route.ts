@@ -1,9 +1,7 @@
-import { getFirestoreDb } from '../../../lib/firebase';
+import { firestoreInsert, firestoreCountWhere, firestoreUpdate } from '../../../lib/firebase';
 import { handleContact, type ContactDeps } from '../../../lib/contact/handler';
 import { createMailSender } from '../../../lib/contact/email';
-import { FieldValue } from 'firebase-admin/firestore';
 
-/** Secrets from environment variables (never exposed to the client). */
 type SecretEnv = {
   RESEND_API_KEY?: string;
   CONTACT_FROM?: string;
@@ -23,49 +21,32 @@ export async function POST(request: Request) {
 
   const deps: ContactDeps = {
     async insert(row) {
-      const db = getFirestoreDb();
-      const docRef = db.collection(COLLECTION).doc(row.id);
-
-      // Use a transaction so a duplicate submission never overwrites an existing doc.
-      const created = await db.runTransaction(async (tx) => {
-        const snap = await tx.get(docRef);
-        if (snap.exists) return false;
-        tx.set(docRef, {
-          id: row.id,
-          name: row.name,
-          email: row.email,
-          company: row.company || null,
-          interest: row.interest,
-          message: row.message,
-          budget: row.budget || null,
-          timeline: row.timeline || null,
-          sourcePath: row.sourcePath || null,
-          ipHash: row.ipHash,
-          notifyStatus: row.notifyStatus,
-          createdAt: row.createdAt,
-          createdAtTs: FieldValue.serverTimestamp(),
-        });
-        return true;
+      return firestoreInsert(COLLECTION, row.id, {
+        id: row.id,
+        name: row.name,
+        email: row.email,
+        company: row.company || null,
+        interest: row.interest,
+        message: row.message,
+        budget: row.budget || null,
+        timeline: row.timeline || null,
+        sourcePath: row.sourcePath || null,
+        ipHash: row.ipHash,
+        notifyStatus: row.notifyStatus,
+        createdAt: row.createdAt,
       });
-
-      return created ? 'created' : 'duplicate';
     },
 
     async countRecent(ipHash, email, sinceMs) {
-      const db = getFirestoreDb();
-      const col = db.collection(COLLECTION);
-
-      const [byIpSnap, byEmailSnap] = await Promise.all([
-        col.where('ipHash', '==', ipHash).where('createdAt', '>', sinceMs).get(),
-        col.where('email', '==', email).where('createdAt', '>', sinceMs).get(),
+      const [byIp, byEmail] = await Promise.all([
+        firestoreCountWhere(COLLECTION, 'ipHash', ipHash, 'createdAt', sinceMs),
+        firestoreCountWhere(COLLECTION, 'email', email, 'createdAt', sinceMs),
       ]);
-
-      return { byIp: byIpSnap.size, byEmail: byEmailSnap.size };
+      return { byIp, byEmail };
     },
 
     async markNotified(id, status) {
-      const db = getFirestoreDb();
-      await db.collection(COLLECTION).doc(id).update({ notifyStatus: status });
+      await firestoreUpdate(COLLECTION, id, { notifyStatus: status });
     },
 
     sendMail: createMailSender({
