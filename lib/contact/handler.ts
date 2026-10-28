@@ -96,13 +96,20 @@ export async function handleContact(request: Request, deps: ContactDeps): Promis
   const id = data.submissionId || crypto.randomUUID();
   const row: StoredEnquiry = { ...data, id, createdAt: deps.now(), ipHash, sourcePath: sourcePath(request), notifyStatus: 'pending' };
 
+  // Rate-limit check — uses composite Firestore queries that need indexes.
+  // If the index isn't ready yet, we skip the check rather than block the submission.
   try {
     const recent = await deps.countRecent(ipHash, data.email, deps.now() - LIMITS.windowMs);
     if (recent.byIp >= LIMITS.perIp || recent.byEmail >= LIMITS.perEmail) {
       deps.log('contact.rate_limited');
       return json({ error: 'Too many enquiries. Please try again later.' }, 429, { 'Retry-After': String(LIMITS.windowMs / 1000) });
     }
+  } catch (err) {
+    // Index not yet built or transient error — log and continue so submission isn't lost.
+    deps.log('contact.rate_check_skipped', { error: String(err) });
+  }
 
+  try {
     const stored = await deps.insert(row);
     if (stored === 'duplicate') {
       deps.log('contact.duplicate');
