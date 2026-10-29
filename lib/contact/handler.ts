@@ -10,7 +10,7 @@ export type StoredEnquiry = Enquiry & {
 
 export type NotifyStatus = 'sent' | 'failed' | 'skipped';
 
-export type Mail = { subject: string; text: string; replyTo: string };
+export type Mail = { subject: string; text: string; html: string; replyTo: string };
 
 export type ContactDeps = {
   insert(row: StoredEnquiry): Promise<'created' | 'duplicate'>;
@@ -37,20 +37,90 @@ async function sha256(text: string) {
 const oneLine = (s: string) => s.replace(/[\r\n]+/g, ' ').slice(0, 200);
 
 export function composeMail(e: Enquiry): Mail {
-  return {
-    subject: `New enquiry: ${oneLine(interestLabel(e.interest))} — ${oneLine(e.name)}`,
-    replyTo: e.email,
-    text: [
-      `Name: ${e.name}`,
-      `Email: ${e.email}`,
-      `Company: ${e.company || '—'}`,
-      `Interest: ${interestLabel(e.interest)}`,
-      `Budget: ${e.budget || '—'}`,
-      `Timeline: ${e.timeline || '—'}`,
-      '',
-      e.message,
-    ].join('\n'),
-  };
+  const interest = interestLabel(e.interest);
+  const company = e.company || '—';
+  const budget = e.budget || '—';
+  const timeline = e.timeline || '—';
+
+  const subject = `[Axilabz Enquiry] ${oneLine(e.name)} — ${oneLine(interest)}`;
+
+  const text = [
+    '───────────────────────────────',
+    'NEW ENQUIRY — AXILABZ WEBSITE',
+    '───────────────────────────────',
+    '',
+    `Name       : ${e.name}`,
+    `Email      : ${e.email}`,
+    `Company    : ${company}`,
+    `Interest   : ${interest}`,
+    `Budget     : ${budget}`,
+    `Timeline   : ${timeline}`,
+    '',
+    'MESSAGE',
+    '───────',
+    e.message,
+    '',
+    '───────────────────────────────',
+    'Reply directly to this email to respond to the enquiry.',
+    'View all enquiries: https://console.firebase.google.com',
+    '───────────────────────────────',
+  ].join('\n');
+
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 12px;color:#6b7280;font-size:13px;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:6px 12px;font-size:14px;color:#111827;vertical-align:top">${value}</td></tr>`;
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:Inter,Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:32px 0">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1);max-width:600px;width:100%">
+
+        <!-- Header -->
+        <tr><td style="background:#1e3a5f;padding:24px 32px">
+          <p style="margin:0;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.3px">Axilabz</p>
+          <p style="margin:4px 0 0;font-size:13px;color:#93c5fd">New website enquiry received</p>
+        </td></tr>
+
+        <!-- Sender info -->
+        <tr><td style="padding:28px 32px 0">
+          <h2 style="margin:0 0 4px;font-size:20px;color:#111827">${e.name}</h2>
+          <p style="margin:0;font-size:14px;color:#6b7280"><a href="mailto:${e.email}" style="color:#2563eb;text-decoration:none">${e.email}</a>${e.company ? ` &nbsp;·&nbsp; ${e.company}` : ''}</p>
+        </td></tr>
+
+        <!-- Details table -->
+        <tr><td style="padding:20px 32px">
+          <table cellpadding="0" cellspacing="0" style="width:100%;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">
+            ${row('Interest', interest)}
+            ${row('Budget', budget)}
+            ${row('Timeline', timeline)}
+          </table>
+        </td></tr>
+
+        <!-- Message -->
+        <tr><td style="padding:0 32px 28px">
+          <p style="margin:0 0 8px;font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.5px">Message</p>
+          <div style="background:#f9fafb;border-left:3px solid #f59e0b;padding:16px;border-radius:0 8px 8px 0;font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap">${e.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+        </td></tr>
+
+        <!-- CTA -->
+        <tr><td style="padding:0 32px 32px">
+          <a href="mailto:${e.email}?subject=Re: Your Axilabz enquiry" style="display:inline-block;background:#f59e0b;color:#1e3a5f;font-size:14px;font-weight:600;padding:12px 24px;border-radius:8px;text-decoration:none">Reply to ${e.name} →</a>
+        </td></tr>
+
+        <!-- Footer -->
+        <tr><td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 32px">
+          <p style="margin:0;font-size:12px;color:#9ca3af">This email was sent automatically from the Axilabz website contact form. Do not reply to this email — use the button above instead.</p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  return { subject, text, html, replyTo: e.email };
 }
 
 function sourcePath(request: Request) {
