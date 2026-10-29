@@ -11,21 +11,24 @@ type PageMeta = {
   index?: boolean;
   type?: 'website' | 'article';
   publishedTime?: string;
+  /** Use the title as-is, without the " | Axilabz" suffix (e.g. a brand-first homepage title). */
+  absoluteTitle?: boolean;
 };
 
 /**
  * Builds unique per-page metadata. The root layout appends " | Axilabz" via the
  * title template, so pass the bare page title here.
  */
-export function pageMetadata({ title, description, path, index = true, type = 'website', publishedTime }: PageMeta): Metadata {
+export function pageMetadata({ title, description, path, index = true, type = 'website', publishedTime, absoluteTitle = false }: PageMeta): Metadata {
   const url = absoluteUrl(path);
+  const fullTitle = absoluteTitle ? title : `${title} | ${SITE.name}`;
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: { canonical: url },
     robots: index ? { index: true, follow: true } : { index: false, follow: false },
     openGraph: {
-      title: `${title} | ${SITE.name}`,
+      title: fullTitle,
       description,
       url,
       siteName: SITE.name,
@@ -34,7 +37,7 @@ export function pageMetadata({ title, description, path, index = true, type = 'w
       ...(publishedTime ? { publishedTime } : {}),
       images: [{ url: absoluteUrl('/art/section-a-2x.webp'), width: 2000, height: 1167, alt: 'Axilabz — AI engineering and software solutions' }],
     },
-    twitter: { card: 'summary_large_image', title: `${title} | ${SITE.name}`, description },
+    twitter: { card: 'summary_large_image', title: fullTitle, description },
   };
 }
 

@@ -8,7 +8,8 @@ import { CtaBand, Section } from '@/components/site/ui';
 import { Icon } from '@/components/site/Icon';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'AI Engineering & Software Solutions',
+  title: 'Axilabz — AI Engineering & Software Solutions',
+  absoluteTitle: true,
   description:
     'Axilabz (also written Axilabs) helps businesses build intelligent applications, automate complex workflows and develop scalable software, from strategy and engineering to deployment and improvement.',
   path: '/',
