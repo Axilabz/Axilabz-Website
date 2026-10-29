@@ -3,7 +3,7 @@ import { pageMetadata } from '@/lib/seo';
 import { Breadcrumbs } from '@/components/site/Breadcrumbs';
 import { Eyebrow } from '@/components/site/ui';
 import { ContactForm } from '@/components/contact/ContactForm';
-import { SITE } from '@/lib/site';
+import { SITE, formatAddress } from '@/lib/site';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Contact — Discuss Your Project',
@@ -33,6 +33,8 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
             <li>Only name, email and message are required. Everything else helps us route your enquiry.</li>
             <li>We read every enquiry. Please do not include passwords or sensitive personal data.</li>
             <li>Your details are used to respond to you. See our privacy policy for how they are handled.</li>
+            {formatAddress() && <li>Axilabz, {formatAddress()}</li>}
+            {SITE.contact.phone && <li>Call: <a href={`tel:${SITE.contact.phone.replace(/[^+\d]/g, '')}`} style={{ textDecoration: 'underline' }}>{SITE.contact.phone}</a></li>}
             {SITE.contact.email && <li>Prefer email? <a href={`mailto:${SITE.contact.email}`} style={{ textDecoration: 'underline' }}>{SITE.contact.email}</a></li>}
           </ul>
         </div>

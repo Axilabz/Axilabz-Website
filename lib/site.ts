@@ -15,15 +15,29 @@ export const SITE = {
   locale: 'en',
   /** Verified public contact details. Fill in once confirmed by the company. */
   contact: {
-    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || undefined,
-    phone: undefined as string | undefined,
-    address: undefined as string | undefined,
+    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'axilabzoffl@gmail.com',
+    phone: '+91 6382266191' as string | undefined,
+    /** Postal address; emitted as schema.org PostalAddress and shown in the footer and on /contact. */
+    address: { addressLocality: 'Chennai', addressRegion: 'Tamil Nadu', postalCode: '600130', addressCountry: 'IN' } as
+      | { streetAddress?: string; addressLocality: string; addressRegion?: string; postalCode?: string; addressCountry: string }
+      | undefined,
   },
+  /** ISO year or date the company was founded, e.g. '2024'. Omitted from JSON-LD while undefined. */
+  foundingDate: '2021' as string | undefined,
   /** Where job applications are sent (opens the visitor's mail app). Override with NEXT_PUBLIC_CAREERS_EMAIL. */
   careersEmail: process.env.NEXT_PUBLIC_CAREERS_EMAIL || 'axilabzoffl@gmail.com',
   /** Verified social profile URLs (used for Organization.sameAs). */
-  social: [] as string[],
+  social: ['https://www.instagram.com/axilabz/'] as string[],
 } as const;
+
+/** One-line address for display, or undefined when no address is configured. */
+export function formatAddress(): string | undefined {
+  const a = SITE.contact.address;
+  if (!a) return undefined;
+  const country = new Intl.DisplayNames(['en'], { type: 'region' }).of(a.addressCountry) ?? a.addressCountry;
+  const line = [a.streetAddress, a.addressLocality, a.addressRegion, country].filter(Boolean).join(', ');
+  return a.postalCode ? `${line} - ${a.postalCode}` : line;
+}
 
 /**
  * Production origin, e.g. https://www.example.com. Supplied by configuration,

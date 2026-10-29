@@ -37,7 +37,7 @@ export function pageMetadata({ title, description, path, index = true, type = 'w
       ...(publishedTime ? { publishedTime } : {}),
       images: [{ url: absoluteUrl('/art/section-a-2x.webp'), width: 2000, height: 1167, alt: 'Axilabz — AI engineering and software solutions' }],
     },
-    twitter: { card: 'summary_large_image', title: fullTitle, description },
+    twitter: { card: 'summary_large_image', title: fullTitle, description, images: [absoluteUrl('/art/section-a-2x.webp')] },
   };
 }
 
@@ -54,7 +54,22 @@ export function organizationLd() {
     description: SITE.description,
     url: absoluteUrl('/'),
     logo: absoluteUrl('/brand/axilabz-logo.png'),
+    ...(SITE.foundingDate ? { foundingDate: SITE.foundingDate } : {}),
+    ...(SITE.contact.address ? { address: { '@type': 'PostalAddress', ...SITE.contact.address } } : {}),
     ...(SITE.contact.email ? { email: SITE.contact.email } : {}),
+    ...(SITE.contact.phone ? { telephone: SITE.contact.phone } : {}),
+    ...(SITE.contact.email || SITE.contact.phone
+      ? {
+          contactPoint: {
+            '@type': 'ContactPoint',
+            contactType: 'customer support',
+            ...(SITE.contact.email ? { email: SITE.contact.email } : {}),
+            ...(SITE.contact.phone ? { telephone: SITE.contact.phone } : {}),
+            availableLanguage: 'English',
+            url: absoluteUrl('/contact'),
+          },
+        }
+      : {}),
     ...(SITE.social.length ? { sameAs: SITE.social } : {}),
   };
 }

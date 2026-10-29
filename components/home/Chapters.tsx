@@ -76,7 +76,7 @@ export function HeroChapter() {
         <div className="cv2-copy">
           <Eyebrow>AI ENGINEERING &amp; SOFTWARE SOLUTIONS</Eyebrow>
           <h1 id="home-title">
-            Build Smarter.<br />Operate Better.<br />
+            <span className="sr-only">Axilabz: AI engineering and software solutions. </span>Build Smarter.<br />Operate Better.<br />
             <span>Scale with AI<i>.</i></span>
           </h1>
           <p>Axilabz helps businesses build intelligent applications, automate complex workflows, and develop scalable software solutions, from initial strategy and engineering to deployment and continuous improvement.</p>

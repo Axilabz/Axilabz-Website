@@ -1,7 +1,7 @@
 import Link from '@/components/site/Link';
 import { Brand } from './Brand';
 import { footerNav } from '@/lib/data/navigation';
-import { SITE } from '@/lib/site';
+import { SITE, formatAddress } from '@/lib/site';
 
 export function Footer() {
   return (
@@ -10,6 +10,8 @@ export function Footer() {
         <div className="gf-about">
           <Brand light />
           <p className="gf-blurb">AI engineering and software solutions: intelligent applications, workflow automation and scalable systems.</p>
+          {formatAddress() && <p>{formatAddress()}</p>}
+          {SITE.contact.phone && <p><a href={`tel:${SITE.contact.phone.replace(/[^+\d]/g, '')}`}>{SITE.contact.phone}</a></p>}
           {SITE.contact.email && <p><a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a></p>}
         </div>
         {Object.entries(footerNav).map(([heading, links]) => (
