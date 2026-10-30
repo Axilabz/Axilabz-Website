@@ -1,0 +1,66 @@
+/* A / X / I sections — layout follows the supplied designs.
+   Graphics are the supplied artwork (public/art/section-*.webp); text, buttons and cards are live HTML. */
+.cv2 { position: relative; overflow: hidden; }
+.cv2-grid { display: grid; grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr); align-items: center; gap: 0; position: relative; padding-block: 56px 36px; }
+.cv2-copy { position: relative; z-index: 2; min-width: 0; }
+.cv2-copy h1, .cv2-copy h2 { font-size: clamp(40px, 5.2vw, 78px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; margin-top: 26px; color: var(--navy); }
+.cv2-copy h2 { font-size: clamp(38px, 4.6vw, 68px); }
+.cv2-copy h1 span, .cv2-copy h2 span { color: var(--electric); }
+.cv2-copy h1 i, .cv2-copy h2 i { color: var(--amber); font-style: normal; }
+.cv2-copy > p { font-size: clamp(16px, 1.35vw, 20px); line-height: 1.6; color: var(--muted); max-width: 560px; margin-top: 24px; }
+.cv2-copy .hero-actions, .cv2-copy > .button { margin-top: 30px; }
+.cv2-copy .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.cv2 .button { min-height: 50px; padding: 14px 24px; font-size: 15px; gap: 14px; border-radius: 12px; }
+.cv2 .button.primary { background: var(--electric); color: #fff; }
+.cv2 .button.primary:hover { background: #1237ca; }
+.cv2 .button.secondary { background: #fff; border: 1px solid #dfe5f2; color: var(--navy); }
+.cv2 .button.dark { background: var(--navy); color: #fff; justify-content: center; min-height: 50px; }
+.cv2 .button.dark:hover { background: #1b2c58; }
+/* --wp: how wide (as % of the grid cell) the supplied picture should be; --mr: extra right offset in %.
+   --r / --kl / --kr / --kt / --kb (set inline from lib/art-meta.json) describe the soft halo around the picture, so the
+   canvas is enlarged and pulled back by the halo size: the picture lands exactly where it would without it. */
+.cv2-art { --wp: 112; --mr: 0; display: block; max-width: none; height: auto; position: relative; z-index: 1; pointer-events: none;
+  width: calc(var(--wp) * var(--r, 1) * 1%);
+  margin: calc(var(--wp) * var(--kt, 0) * -1%) calc(var(--wp) * var(--kr, 0) * -1% + var(--mr) * 1%) calc(var(--wp) * var(--kb, 0) * -1%) calc(var(--wp) * var(--kl, 0) * -1%); }
+
+/* A */
+.cv2-a { background: radial-gradient(ellipse at 72% 28%, #cbdfff8c, transparent 60%), linear-gradient(125deg, #fff 8%, #f3f7ff 70%, #fff7e6); }
+.cv2-a .cv2-grid { min-height: 520px; padding-bottom: 28px; }
+.cv2-a .cv2-art { --wp: 112; --mr: -9; }
+.cv2-a .capabilities { margin-bottom: 30px; }
+
+/* X */
+.cv2-x { background: radial-gradient(ellipse at 62% 38%, #eef3ff, transparent 62%), linear-gradient(110deg, #fbfbfd, #fffdf8); border-top: 1px solid #fff; }
+.cv2-x .cv2-art { --wp: 104; --mr: -4; }
+
+/* I */
+.cv2-i { background: radial-gradient(ellipse at 70% 30%, #dce9ff99, transparent 60%), linear-gradient(180deg, #fff, #f3f7ff 62%, #fffaf0); }
+.cv2-i .cv2-art { --wp: 100; --mr: 0; }
+
+/* Feature bar */
+.cv2-feats { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #ffffffd9; border: 1px solid #e3e8f2; border-radius: 22px; padding: 22px 8px; margin: 0 0 40px; position: relative; z-index: 2; }
+.cv2-feats li { display: flex; gap: 14px; align-items: flex-start; padding: 4px 24px; border-right: 1px solid #e3e8f2; min-width: 0; }
+.cv2-feats li:last-child { border-right: 0; }
+.cv2-feats svg { color: var(--electric); flex-shrink: 0; stroke-width: 1.5; margin-top: 2px; }
+.cv2-feats strong { display: block; font-size: 15px; font-weight: 700; font-family: Manrope, sans-serif; color: var(--navy); }
+.cv2-feats span { display: block; font-size: 13.5px; line-height: 1.5; color: var(--muted); margin-top: 4px; }
+
+@media (max-width: 1000px) {
+  .cv2-grid { grid-template-columns: 1fr; padding-top: 36px; }
+  .cv2-art, .cv2-a .cv2-art, .cv2-x .cv2-art, .cv2-i .cv2-art { --wp: 100; --mr: 0; }
+  .cv2-feats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 0; }
+  .cv2-feats li:nth-child(2) { border-right: 0; }
+}
+@media (max-width: 520px) {
+  .cv2-feats { grid-template-columns: 1fr; padding: 16px 6px; }
+  .cv2-feats li { border-right: 0; padding: 8px 16px; }
+  .cv2-copy .hero-actions .button { width: 100%; }
+}
+
+/* Labz hero graphic (absolute on desktop, in-flow on small screens); same halo maths as .cv2-art */
+.labz-art-wrap { position: absolute; display: block; max-width: none; height: auto; z-index: 1; pointer-events: none;
+  width: calc(60 * var(--r, 1) * 1%); right: calc(-3% - 60 * var(--kr, 0) * 1%); top: 34px; margin-top: calc(60 * var(--kt, 0) * -1%); }
+@media (max-width: 600px) { .labz-art-wrap { position: relative; right: auto; top: auto; width: calc(112 * var(--r, 1) * 1%); margin: calc(112 * var(--kt, 0) * -1% + 5px) calc(-6% - 112 * var(--kr, 0) * 1%) calc(112 * var(--kb, 0) * -1% - 7px) calc(-6% - 112 * var(--kl, 0) * 1%); } }
+
+/* Room above the Labz graphic so its soft halo is not clipped by the section edge */
+@media (min-width: 601px) { .labz-chapter .labz-hero { min-height: 400px; } }

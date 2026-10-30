@@ -44,6 +44,10 @@ export default defineConfig(async ({ command }) => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
+    // lucide-react is imported from client components; letting Vite pre-bundle it in
+    // dev made it re-optimise on the first click and reload the page mid-navigation,
+    // so links appeared not to open. Serving it unbundled avoids that.
+    optimizeDeps: { exclude: ["lucide-react"] },
     server: {
       ...(managedLinux
         ? { host: "0.0.0.0", allowedHosts: ["terminal.local"] }

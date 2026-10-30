@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Always resolve page metadata before streaming the body, so title, description,
+  // canonical and Open Graph tags are in <head> for every client, not only known bots.
+  htmlLimitedBots: /.*/,
 };
 
 export default nextConfig;

@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A newer push to the same branch cancels the run it supersedes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Public value, inlined at build time. If it is missing the built site has no
+      # canonical URLs and /sitemap.xml returns 404, so CI builds with it and checks.
+      NEXT_PUBLIC_SITE_URL: https://www.axilabz.com
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 22.18+ runs the .ts tests natively (package.json engines: >=22.13).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Pinned to package.json "packageManager".
+      - run: npm install -g pnpm@11.25.0
+
+      - uses: actions/cache@v4
+        with:
+          path: .sites-runtime/pnpm-store
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-store-${{ runner.os }}-
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+
+      - name: Built site carries the production origin
+        run: |
+          grep -rlq "$NEXT_PUBLIC_SITE_URL" dist/server dist/client \
+            || { echo "::error::$NEXT_PUBLIC_SITE_URL is not in the build output; sitemap and canonicals would be broken."; exit 1; }
+
+      - name: Favicons are in the build
+        run: test -f dist/client/favicon.ico && test -f dist/client/apple-touch-icon.png
