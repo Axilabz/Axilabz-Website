@@ -1,0 +1,309 @@
+/* Axilabz brand layer — "Precision Lab" moodboard: Midnight / Paper / Cobalt / Amber.
+   Loaded after globals.css so it re-themes the existing layout without touching structure. */
+:root{
+  --midnight:#0b1020;--paper:#f4f2eb;--cobalt:#2340c8;--amber:#ffb020;
+  --stone:#e9e7df;--cobalt-tint:#e0e5f7;--ink-muted:#5b6275;--rule:#dcd9cf;
+  --navy:var(--midnight);--blue:var(--cobalt);--muted:var(--ink-muted);--line:var(--rule);--pale:var(--cobalt-tint);
+  --font-display:'Bricolage Grotesque','Noto Sans Tamil',Arial,sans-serif;
+  --font-body:'Hanken Grotesk','Noto Sans Tamil',Arial,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+  --font-accent:'Instrument Serif',Georgia,serif;
+}
+body{background:transparent;color:var(--midnight);font-family:var(--font-body)}
+header{background:#f4f2ebee;backdrop-filter:blur(8px)}
+:focus-visible{outline-color:var(--cobalt)!important}
+
+/* Logo */
+.brand>img,footer .brand>img{width:auto;height:68px;object-fit:contain;display:block}
+footer .brand>img{height:44px}
+.brand>span{display:none}
+
+/* Type */
+h1,h2,h3,.offer-list strong,.product-card h3,.steps h3,.expertise-grid h3,.form-success h3{font-family:var(--font-display);font-weight:700}
+.hero h1{font-weight:800;letter-spacing:-.03em;word-spacing:.04em}
+.section-heading h2,h2{font-weight:700;letter-spacing:-.035em}
+.eyebrow,.offer-number,.detail-top>span:nth-child(2),.detail-top>b,.offer-detail h4,.product-top small,.steps article>span,.audio-time,.art-bottom,.capability-strip>span{font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.08em}
+.eyebrow{color:var(--ink-muted);font-weight:500;font-size:11px}
+.eyebrow>span{background:var(--amber);width:28px}
+.hero h1 em,h1 em,h2 em{font-family:var(--font-accent);font-style:italic;font-weight:400;color:var(--cobalt);letter-spacing:-.01em;font-size:1.08em}
+.hero h1 em>span{color:inherit}
+.hero-description,.section-heading>p{color:var(--ink-muted)}
+.hero-foot{color:var(--ink-muted)}.hero-foot svg{color:var(--cobalt)}
+
+/* Buttons: amber is the single signal per screen — hero CTA; elsewhere midnight/cobalt */
+.btn{border-radius:8px;font-family:var(--font-body);font-weight:600}
+.primary{background:var(--midnight);color:var(--paper);box-shadow:none}
+.primary:hover{background:var(--cobalt)}
+.hero .primary{background:var(--amber);color:var(--midnight);border:1px solid #e09a12}
+.hero .primary:hover{background:#ffc04d}
+.secondary{background:#fff;border:1px solid var(--rule)}
+.text{color:var(--cobalt)}
+.icon:hover{background:var(--cobalt-tint)}
+nav a:hover{color:var(--cobalt)}
+
+/* Hero: original AXI artwork, framed to match the brand */
+.hero-art{border-radius:18px;overflow:hidden;background:none}
+
+/* Capability strip, sections, surfaces */
+.capability-strip{background:#fff;border-color:var(--rule);box-shadow:none}
+.capability-strip svg,.deliverables svg,.expertise-grid article>svg,.hero-foot svg{color:var(--cobalt)}
+.engagement-section{background:var(--stone);border-color:var(--rule)}
+.engagement-workbench{background:#fff;border-color:var(--rule);box-shadow:none}
+.offer-list{background:var(--paper);border-color:var(--rule)}
+.offer-list button{border-bottom-color:var(--rule)}
+.offer-list button[aria-selected=true]{background:var(--cobalt);box-shadow:none}
+.detail-icon{background:var(--cobalt-tint);color:var(--cobalt)}
+.deliverables{background:var(--paper)}
+.deliverables p{color:#2a3150}
+.scope-note button,.product-card>button{color:var(--cobalt)}
+.expertise-grid article,.steps article{border-top-color:var(--midnight)}
+.steps article>span{background:var(--cobalt-tint);color:var(--cobalt);border-radius:999px;padding:6px 12px}
+.products-section{background:var(--paper)}
+.product-card{background:#fff;border-color:var(--rule)}
+.product-mark{background:var(--cobalt-tint);color:var(--cobalt)}
+.product-art,.bots,.voice,.docs{background:var(--stone)}
+.bot.blue{background:var(--cobalt)}.bot.black{background:var(--midnight)}.bot.gold{background:var(--amber)}
+.mini-task{border-color:var(--rule);background:#ffffffe6}.mini-task>svg{color:var(--cobalt)}
+.wave b{background:var(--cobalt)}
+.document{border-color:var(--rule)}.document>span:first-child{background:var(--cobalt)}
+.document svg{color:var(--cobalt)}
+.faq-list,details{border-color:var(--rule)}
+.contact-band{background:var(--midnight);border-radius:18px}
+.contact-band .eyebrow{color:#8b93aa}.contact-band .eyebrow>span{background:var(--amber)}
+.contact-band h2{font-family:var(--font-display)}
+.contact-band p:not(.eyebrow){color:#aab1c6}
+.btn.light{background:var(--amber);color:var(--midnight)}
+.contact-a{font-family:var(--font-display);color:var(--cobalt);opacity:.25}
+footer>p,footer>div small{color:var(--ink-muted)}
+dialog{border-color:var(--rule);background:var(--paper);font-family:var(--font-body)}
+dialog::backdrop{background:#0b102070}
+input,select,textarea{border-color:var(--rule);background:#fff}
+form label,.contact-form label{color:#3a4260}
+.error{color:#b3261e}
+
+@media(max-width:800px){.brand>img{height:46px}}
+.brand>img{flex-shrink:0;max-width:none}
+@media(max-width:800px){header{gap:10px;padding-inline:16px}.brand>img{height:40px}.nav-cta{margin-left:auto}}
+
+/* Soft hero gradient: pale blue glow behind the artwork, warm amber hint at the edge, fading into Paper */
+html{background-color:var(--paper);background-image:
+  radial-gradient(ellipse 55% 50% at 80% 24%,#c9d8ff 0,#dde7ff80 45%,transparent 75%),
+  radial-gradient(ellipse 30% 36% at 100% 42%,#ffe3b366 0,transparent 70%),
+  radial-gradient(ellipse 35% 40% at 8% 8%,#e6ecff 0,transparent 70%),
+  linear-gradient(180deg,#f8faff 0,#f6f6f4 720px,var(--paper) 1000px);
+  background-repeat:no-repeat}
+body{background:transparent}
+header{background:transparent;backdrop-filter:none}
+.hero{position:relative}
+.hero::after{content:"";position:absolute;right:-30px;top:40px;width:90px;height:260px;pointer-events:none;background:radial-gradient(circle,#8fa6e0 1.3px,transparent 1.6px) 0 0/22px 22px;opacity:.55}
+.hero-art{background:none;box-shadow:none}
+@media(max-width:800px){.hero::after{display:none}}
+
+/* Entire app: one continuous gradient that stays put while content scrolls */
+html{background-color:var(--paper);background-attachment:fixed;background-repeat:no-repeat;background-image:
+  radial-gradient(ellipse 55% 50% at 82% 18%,#c9d8ff 0,#dde7ff80 45%,transparent 75%),
+  radial-gradient(ellipse 32% 40% at 100% 55%,#ffe3b36b 0,transparent 70%),
+  radial-gradient(ellipse 45% 45% at 5% 85%,#d7e2ff 0,transparent 72%),
+  radial-gradient(ellipse 35% 40% at 6% 6%,#e6ecff 0,transparent 70%),
+  linear-gradient(180deg,#f8faff 0,#f4f5f8 55%,#f6f4ee 100%)}
+.engagement-section{background:linear-gradient(180deg,#ffffff8c,#e8ecf9a6);border-color:#dfe4f2;backdrop-filter:blur(2px)}
+.products-section{background:transparent}
+.offer-list{background:#f6f8fdcc}
+.product-art,.bots,.voice,.docs{background:linear-gradient(160deg,#eef2ff,#e6ebf8)}
+.capability-strip,.engagement-workbench,.product-card{background:#ffffffd9;backdrop-filter:blur(6px)}
+.deliverables{background:#f3f5fb}
+
+/* AXI vector artwork */
+.hero-art{position:relative;overflow:visible}
+.axi-art{display:block;width:100%;height:auto;filter:drop-shadow(0 24px 40px #2340c82e)}
+.axi-tag{position:absolute;right:0;top:-6%;margin:0;padding:12px 18px 12px 24px;border:1px solid #ffffffd9;background:#ffffffb3;backdrop-filter:blur(14px);border-radius:12px;font:500 clamp(13px,1.35vw,19px)/1.35 var(--font-body);color:var(--midnight);box-shadow:0 12px 30px #2340c814}
+.axi-tag b{position:absolute;left:11px;top:12px;bottom:12px;width:2px;background:var(--amber)}
+.axi-tag strong{color:#e99b05;font-weight:500}
+.hero{grid-template-columns:1fr;min-height:0;padding-top:70px;padding-bottom:70px}
+.hero-description{max-width:560px}
+
+/* Hero right: AXI artwork fading into the page gradient on all sides */
+.hero{grid-template-columns:.9fr 1.1fr;gap:10px;padding-top:55px;padding-bottom:54px;min-height:560px}
+.hero-art{height:380px;border-radius:0;overflow:visible;margin-right:-60px}
+.hero-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:35% 40%;
+  -webkit-mask-image:radial-gradient(ellipse 52% 50% at 50% 50%,#000 55%,transparent 100%);mask-image:radial-gradient(ellipse 52% 50% at 50% 50%,#000 55%,transparent 100%)}
+@media(max-width:800px){.hero{grid-template-columns:1fr;min-height:0}.hero-art{height:220px;margin:0}}
+.hero{grid-template-columns:.78fr 1.22fr;gap:0}
+.hero-art{height:auto;margin-right:-70px;align-self:center}
+.hero-art img{height:auto;object-fit:contain;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg,transparent,#000 16%,#000 84%,transparent),linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);mask-composite:intersect}
+.hero-art{margin-right:0;width:100%}
+.hero-art img{width:100%;height:auto;object-fit:contain;-webkit-mask-image:none;mask-image:none;border-radius:14px;box-shadow:0 18px 44px #2340c824}
+.hero{grid-template-columns:.85fr 1.15fr;gap:20px;min-height:0}
+.hero-art{margin-right:-30px}
+.hero-art img{border-radius:18px;box-shadow:0 20px 50px #2340c81f}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.hero-art{height:auto;margin:0}}
+
+/* Hero art melts into the page: image gradient extends behind it, edges feather out */
+.hero-art{position:relative;isolation:isolate}
+.hero-art::before{content:"";position:absolute;z-index:-1;inset:-18% -14% -22% -12%;pointer-events:none;background:
+  radial-gradient(ellipse 44% 42% at 52% 42%,#b9ceff 0,#cfdcff80 45%,transparent 100%),
+  radial-gradient(ellipse 20% 26% at 76% 66%,#ffd9953d 0,transparent 100%)}
+.hero-art img{border-radius:0;box-shadow:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 10%,#000 88%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 10%,#000 88%,transparent);mask-composite:intersect}
+
+/* One continuous gradient: no section may paint its own background or edge */
+.engagement-section{background:none!important;border:0!important;backdrop-filter:none}
+.products-section,.expertise,.approach,.faq,main>section{background:none}
+header,footer{border:0}
+header,main,footer{position:relative;z-index:1}
+html,body{overflow-x:hidden}
+.contact-band .contact-mark{position:absolute;right:70px;bottom:-34px;height:125%;width:auto;max-width:none;opacity:.5;pointer-events:none;filter:saturate(1.15)}
+.contact-band .btn{position:relative;z-index:1}
+@media(max-width:800px){.contact-band .contact-mark{right:-30px;bottom:-24px;height:80%;opacity:.35}}
+.contact-band .contact-mark{right:300px;bottom:28px;top:auto;height:230px;opacity:.9}
+@media(max-width:1000px){.contact-band .contact-mark{right:30px;height:150px;opacity:.35}}
+@media(max-width:800px){.contact-band .contact-mark{right:-20px;bottom:-10px;height:120px;opacity:.3}}
+.nav-cta.primary{background:var(--amber);color:#000;border:1px solid #e09a12}
+.nav-cta.primary:hover{background:#ffc04d}
+
+/* Amber buttons flip to black with amber text on hover / press */
+.nav-cta.primary:hover,.nav-cta.primary:active,
+.hero .primary:hover,.hero .primary:active,
+.btn.light:hover,.btn.light:active{background:#000;color:var(--amber);border-color:#000}
+.nav-cta.primary,.hero .primary,.btn.light{transition:background .2s,color .2s,transform .2s}
+
+/* Contact band: faded logo mark on the right + moodboard amber plus-grid */
+.contact-band .contact-mark{right:-20px;bottom:-50px;top:auto;height:130%;opacity:.16;filter:none}
+.contact-band::before{content:"";position:absolute;right:0;top:0;bottom:0;width:46%;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26'%3E%3Cpath d='M13 8v10M8 13h10' stroke='%23ffb020' stroke-width='1.6'/%3E%3C/svg%3E") 0 0/26px 26px repeat;
+  opacity:.5;-webkit-mask-image:linear-gradient(90deg,transparent,#000 75%);mask-image:linear-gradient(90deg,transparent,#000 75%)}
+.contact-band>div:first-child,.contact-band .btn{position:relative;z-index:1}
+@media(max-width:1000px){.contact-band .contact-mark{right:-30px;height:110%;opacity:.14}.contact-band::before{width:70%;opacity:.5}}
+
+/* Readability: small type scaled up (nothing below 12px) */
+nav a{font-size:14px}
+.btn{font-size:14px}.nav-cta{font-size:13.5px}
+.eyebrow,.faq .eyebrow,.contact-band .eyebrow,dialog .eyebrow{font-size:12px}
+.hero-description{font-size:17px}
+.hero-foot{font-size:13px}
+.capability-strip>span{font-size:12.5px}.capability-strip strong{font-size:14px}.capability-strip>div{font-size:14px}
+.section-heading>p{font-size:15px;max-width:380px}
+.offer-number{font-size:12px}
+.offer-list strong{font-size:15px}.offer-list small{font-size:13px}
+.detail-top>span:nth-child(2){font-size:12px}.detail-top>b{font-size:12px}
+.offer-description{font-size:15px}
+.offer-detail h4{font-size:12px}
+.deliverables p{font-size:14px}
+.offer-fit p{font-size:13.5px;line-height:1.75}
+.detail-bottom>span{font-size:13.5px}.detail-bottom .btn{font-size:13.5px}
+.scope-note p{font-size:13px}.scope-note button{font-size:13px}
+.expertise-grid h3{font-size:17px}.expertise-grid p{font-size:14px}
+.product-top small{font-size:12px}
+.product-card>p{font-size:14.5px}.product-card>button{font-size:14px}
+.mini-task>span{font-size:12px}.mini-task strong{font-size:13px}
+.audio-time{font-size:12px}
+.document>div{font-size:11px}
+.steps article>span{font-size:12px}.steps p{font-size:14px}
+summary{font-size:15px}details p{font-size:14px}
+.contact-band p:not(.eyebrow){font-size:15px}
+footer>p{font-size:14px}footer>div>a{font-size:14px}footer>div small{font-size:12px}
+dialog>p:not(.eyebrow){font-size:14.5px}
+form label,.contact-form label{font-size:13px}
+input,select,textarea{font-size:14px}
+.error{font-size:12.5px}.email-note,.form-note,.contact-form .consent span{font-size:12.5px}
+@media(max-width:800px){.offer-list small{font-size:12px}.deliverables p{font-size:13.5px}.steps p,.expertise-grid p{font-size:13.5px}.offer-list strong{font-size:14px}.section-heading>p{font-size:14px}}
+.detail-bottom>span{max-width:280px}
+
+
+/* No visible scrollbars (scrolling still works) */
+*{scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none;width:0;height:0}
+
+/* Gradient seam fix: html paints the paper colour, overflow is clipped instead of hidden so sticky works */
+html{overflow-x:clip}
+body{overflow-x:clip}
+
+/* Sticky header from the first pixel of scroll */
+header{position:sticky!important;top:0;z-index:40!important;transition:background .2s,box-shadow .2s,backdrop-filter .2s}
+header{width:100%!important;max-width:none!important;margin:0!important;padding-inline:max(50px,calc((100% - 1440px)/2 + 50px))!important}
+header.stuck{background:#f8faffe6!important;backdrop-filter:blur(12px) saturate(140%)!important;box-shadow:0 1px 0 #e3e9f5}
+@media(max-width:1100px){header{padding-inline:30px!important}}
+@media(max-width:800px){header{padding-inline:16px!important}}
+
+/* Form controls: no blue focus ring, custom dropdown arrow */
+input:focus,input:focus-visible,textarea:focus,textarea:focus-visible,select:focus,select:focus-visible{outline:none!important;border-color:#9aa3b8;box-shadow:none}
+select{-webkit-appearance:none;appearance:none;cursor:pointer;padding-right:38px;background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%230b1020' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+select option{background:#fff;color:var(--midnight)}
+
+/* Feather the hero artwork edges so its baked-in backdrop never shows a seam against the page gradient */
+.hero-art img{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 86%,transparent 100%),linear-gradient(180deg,transparent 0,#000 7%,#000 93%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 86%,transparent 100%),linear-gradient(180deg,transparent 0,#000 7%,#000 93%,transparent 100%);mask-composite:intersect}
+
+
+/* Graphical page loader */
+.preloader{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(ellipse 60% 50% at 50% 42%,#e3ebff 0,#f8faff 55%,#f4f2eb 100%);transition:opacity .6s ease,visibility .6s ease,transform .6s ease;animation:pl-failsafe .5s 6s forwards}
+.preloader.done{opacity:0;visibility:hidden;transform:scale(1.04)}
+.pl-stage{position:relative;width:150px;height:150px;display:grid;place-items:center}
+.pl-logo{width:104px;height:104px;object-fit:contain;position:relative;animation:pl-reveal 1.1s cubic-bezier(.2,.7,.2,1) both,pl-float 2.4s 1.1s ease-in-out infinite}
+.pl-ring{position:absolute;inset:0;border-radius:50%;border:2px solid #2340c833;border-top-color:#2340c8;border-right-color:#ffb020;animation:pl-spin 1.4s linear infinite}
+.pl-ring.r2{inset:14px;border-width:1.5px;animation-duration:2.2s;animation-direction:reverse;opacity:.6}
+.pl-word{font-family:var(--font-display);font-weight:800;font-size:24px;letter-spacing:.32em;text-indent:.32em;color:var(--midnight);opacity:0;animation:pl-fade .8s .5s forwards}
+.pl-bar{width:150px;height:3px;border-radius:3px;background:#2340c81f;overflow:hidden}
+.pl-bar i{display:block;height:100%;width:40%;border-radius:3px;background:linear-gradient(90deg,#2340c8,#ffb020);animation:pl-slide 1.2s ease-in-out infinite}
+@keyframes pl-reveal{from{opacity:0;transform:translateY(14px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes pl-float{50%{transform:translateY(-6px) scale(1.04)}}
+@keyframes pl-spin{to{transform:rotate(360deg)}}
+@keyframes pl-slide{from{transform:translateX(-110%)}to{transform:translateX(260%)}}
+@keyframes pl-fade{to{opacity:1}}
+@keyframes pl-failsafe{to{opacity:0;visibility:hidden}}
+@media(prefers-reduced-motion:reduce){.pl-ring,.pl-bar i,.pl-logo{animation:none}}
+
+
+/* Footer address + social icons */
+footer>div .footer-address{margin:18px 0 0;font-size:14px;color:var(--ink-muted)}
+footer>div .socials{display:flex;gap:12px;margin:16px 0 4px;flex-wrap:wrap}
+footer>div .socials a{width:44px;height:44px;display:grid!important;place-items:center;border-radius:12px;background:#0b10200d;color:var(--midnight);transition:background .2s,color .2s,transform .2s}
+footer>div .socials a:hover{background:var(--cobalt);color:#fff;transform:translateY(-2px)}
+footer>div .socials svg{width:22px;height:22px}
+
+/* Larger logo on mobile */
+@media(max-width:800px){header .brand>img{width:auto!important;height:54px!important;max-width:none}header{height:84px}}
+@media(max-width:380px){header .brand>img{height:46px!important}}
+
+
+/* Stack all engagement panels in one grid cell: height stays at the tallest panel, so switching never shifts the page */
+.offer-stack{display:grid;min-width:0}
+.offer-stack>.offer-detail{grid-area:1/1;visibility:hidden;pointer-events:none}
+.offer-stack>.offer-detail.active{visibility:visible;pointer-events:auto}
+
+/* No lift / movement on buttons when hovered or clicked */
+.btn,.btn:hover,.btn:active,.nav-cta,.nav-cta:hover,.nav-cta:active,.hero .primary:hover,.hero .primary:active,button:active,a.btn:active{transform:none!important;transition:none!important}
+footer>div .socials a:hover{transform:none}
+
+/* Amber full stops in large headings */
+h1 .dot,h2 .dot{color:var(--amber)}
+
+/* Hero dot grid -> plus signs */
+.hero::after{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M11 7v8M7 11h8' stroke='%238fa6e0' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E") 0 0/22px 22px}
+
+
+/* Social icons: round, brand-coloured on hover */
+footer>div .socials a{border-radius:50%;width:46px;height:46px;background:#fff;box-shadow:0 0 0 1px var(--rule),0 2px 6px #0b10200f;color:#3a4358;transition:background .2s,color .2s,box-shadow .2s}
+footer>div .socials svg{width:20px;height:20px}
+footer>div .socials a:hover{transform:none;color:#fff;box-shadow:none}
+footer>div .socials .s-wa:hover{background:#25d366}
+footer>div .socials .s-mail:hover{background:var(--cobalt)}
+footer>div .socials .s-ig:hover{background:linear-gradient(45deg,#f9a03c,#dd2a7b 55%,#7a3fd1)}
+footer>div .socials .s-in:hover{background:#0a66c2}
+footer>div .socials .s-x:hover{background:#000}
+
+
+/* Enquiry success state */
+.form-success{display:flex!important;flex-direction:column;align-items:center;text-align:center;padding:28px 8px 12px}
+.form-success p{max-width:340px;margin:0 auto 22px}
+.success-badge{position:relative;width:96px;height:96px;display:grid;place-items:center;margin-bottom:22px}
+.success-badge svg{width:84px;height:84px;position:relative;filter:drop-shadow(0 8px 16px #1fa86a40)}
+.success-badge .sc{fill:#e9f8f0;stroke:#1fa86a;stroke-width:2.5;stroke-dasharray:145;stroke-dashoffset:145;animation:sb-draw .7s ease-out forwards}
+.success-badge .st{fill:none;stroke:#1fa86a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;animation:sb-draw .45s .55s ease-out forwards}
+.success-badge .ring{position:absolute;inset:0;border-radius:50%;border:2px solid #1fa86a;opacity:0;animation:sb-ring 1.8s .6s ease-out infinite}
+.success-badge .ring.r2{animation-delay:1.2s}
+@keyframes sb-draw{to{stroke-dashoffset:0}}
+@keyframes sb-ring{0%{transform:scale(.8);opacity:.45}100%{transform:scale(1.35);opacity:0}}
+@media(prefers-reduced-motion:reduce){.success-badge .ring{display:none}.success-badge .sc,.success-badge .st{animation:none;stroke-dashoffset:0}}
