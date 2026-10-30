@@ -21,6 +21,14 @@ const productConfigs: Record<string, {
     messageLabel: 'Description *',
     messagePlaceholder: 'Tell us about the bot workflows, tool integrations, or agent capabilities you want to test or govern...',
   },
+  'axivoice': {
+    title: 'Discuss AxiVoice',
+    eyebrow: 'CONVERSATION INTELLIGENCE',
+    subtitle: 'Tell us about your audio streams, meeting platforms, and summarisation requirements.',
+    label: 'AxiVoice — Conversation Intelligence',
+    messageLabel: 'Description *',
+    messagePlaceholder: 'Tell us about your audio/meeting transcription, summary needs, or CRM integrations...',
+  },
   'axidoc': {
     title: 'Discuss AxiDoc',
     eyebrow: 'DOCUMENT INTELLIGENCE',
@@ -44,7 +52,7 @@ function ContactForm({interest}:{interest:string}){
   const [errors,setErrors]=useState<Record<string,string>>({});
   const slug=(v:string)=>/AxiVoice/i.test(v)?'axivoice':/AxiDoc/i.test(v)?'axidoc':/AxiCore/i.test(v)?'axicore':/AxiSolve|Custom/i.test(v)?'custom-ai':/Partnership/i.test(v)?'general':'engagement';
   const initialTopic = slug(interest);
-  const isSimplified = initialTopic === 'axicore' || initialTopic === 'custom-ai' || initialTopic === 'axidoc';
+  const isSimplified = initialTopic === 'axicore' || initialTopic === 'custom-ai' || initialTopic === 'axidoc' || initialTopic === 'axivoice';
 
   const [topic,setTopic]=useState(initialTopic);
   const [prevInterest,setPrevInterest]=useState(interest);
@@ -171,11 +179,11 @@ function ContactForm({interest}:{interest:string}){
 }
 
 export default function Home(){
-const [selected,setSelected]=useState(0),[menu,setMenu]=useState(false),[interest,setInterest]=useState('AxiSolve — Custom AI solution'),[product,setProduct]=useState<string|null>(null);
+const [selected,setSelected]=useState(0),[menu,setMenu]=useState(false),[interest,setInterest]=useState('General enquiry / partnership'),[product,setProduct]=useState<string|null>(null);
 const contactRef=useRef<HTMLDialogElement>(null),productRef=useRef<HTMLDialogElement>(null);
 useEffect(()=>{if(product)productRef.current?.showModal();},[product]);useEffect(()=>{if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const t=setTimeout(()=>setSelected(v=>(v+1)%engagements.length),5000);return()=>clearTimeout(t);},[selected]);useEffect(()=>{const b=document.getElementById('offer-'+selected);const p=b?.parentElement;if(b&&p&&p.scrollWidth>p.clientWidth)p.scrollTo({left:b.offsetLeft-12,behavior:'smooth'});},[selected]);useEffect(()=>{const h=document.querySelector('header');const f=()=>h?.classList.toggle('stuck',window.scrollY>0);f();window.addEventListener('scroll',f,{passive:true});return()=>window.removeEventListener('scroll',f);},[]);
 function enquire(topic:string){productRef.current?.close();setProduct(null);setInterest(topic);contactRef.current?.showModal();}
-function handleClick(e:MouseEvent<HTMLDivElement>){const el=e.target as Element;const c=el.closest<HTMLElement>('[data-contact]');if(c)enquire(c.dataset.contact==='Let’s discuss your project'?'AxiSolve — Custom AI solution':c.dataset.contact==='Help me choose an engagement'?'AxiSolve — Custom AI solution':c.dataset.contact||'AxiSolve — Custom AI solution');const p=el.closest<HTMLElement>('[data-product]');if(p)enquire(p.dataset.product+' — Product enquiry');if(el.closest('#navigation a'))setMenu(false);}
+function handleClick(e:MouseEvent<HTMLDivElement>){const el=e.target as Element;const c=el.closest<HTMLElement>('[data-contact]');if(c)enquire(c.dataset.contact==='Let’s discuss your project'?'General enquiry / partnership':c.dataset.contact==='Help me choose an engagement'?'General enquiry / partnership':c.dataset.contact||'General enquiry / partnership');const p=el.closest<HTMLElement>('[data-product]');if(p)enquire(p.dataset.product+' — Product enquiry');if(el.closest('#navigation a'))setMenu(false);}
 const activeConfig = productConfigs[/AxiVoice/i.test(interest)?'axivoice':/AxiDoc/i.test(interest)?'axidoc':/AxiCore/i.test(interest)?'axicore':/AxiSolve|Custom/i.test(interest)?'custom-ai':/Partnership/i.test(interest)?'general':'engagement'] || productConfigs['general'];
 return <div onClick={handleClick}><a href="#main" className="skip-link">Skip to content</a><header><a className="brand" href="#home" aria-label="Axilabz home"><img src="/brand/axilabz-logo.png" alt="Axilabz — Accelerating Xcellence Innovation" width="1200" height="348"/></a><nav className={menu?"visible":""} id="navigation" aria-label="Main navigation"><a href="#engagements">Ways to work with us</a><a href="#expertise">Expertise</a><a href="#products">Products</a><a href="#approach">Our approach</a></nav><button className="btn primary nav-cta" data-contact="Let’s discuss your project">Let’s talk <Glyph name="arrow-up-right"/></button><button className="menu icon" aria-label={menu?"Close navigation":"Open navigation"} aria-expanded={menu} aria-controls="navigation" onClick={()=>setMenu(!menu)}><Glyph name="menu"/></button></header>
 <main id="main"><section className="hero wrap" id="home"><div className="hero-copy"><p className="eyebrow"><span></span> YOUR AI ENGINEERING PARTNER</p><h1>AI that works<span className="dot">.</span><br/>A clear way<br/>to <em>start</em><span className="dot">.</span></h1><p className="hero-description">From the first technical question to a working solution. We help you build, connect and improve AI—with a focused scope and a useful outcome.</p><div className="hero-actions"><a className="btn primary" href="#engagements">Find your starting point <Glyph name="arrow-right"/></a><button className="btn text" data-contact="Let’s discuss your project">Talk through your idea <Glyph name="arrow-up-right"/></button></div><p className="hero-foot"><Glyph name="check-circle"/> Start focused. Prove the value. Build from there.</p></div><div className="hero-art"><img src="/axi-hero-full.webp" alt="Architectural AXI letters filled with a connected city skyline at dusk, with the tag From idea to impact." width="1774" height="887"/></div></section>
