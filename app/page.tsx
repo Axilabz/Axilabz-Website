@@ -5,16 +5,219 @@ import {engagements} from './data/engagements';
 const products=[{name:'AxiCore'},{name:'AxiVoice'},{name:'AxiDoc'}];
 const glyphs={ 'arrow-up-right':ArrowUpRight,'arrow-right':ArrowRight,menu:Menu,x:X,check:Check,'check-circle':CheckCircle,compass:Compass,layers:Layers,code:Code,activity:Activity,cloud:Cloud,info:Info,cpu:Cpu,'file-text':FileText,sliders:Sliders,hexagon:Hexagon,mic:Mic,'git-pull-request':GitPullRequest,plus:Plus,link:Link,shield:Shield};
 function Glyph({name}:{name:string}){const Icon=glyphs[name as keyof typeof glyphs]||Compass;return <Icon aria-hidden="true"/>;}
-function ContactForm({interest}:{interest:string}){const [state,setState]=useState<'idle'|'sending'|'success'|'error'>('idle');const [errors,setErrors]=useState<Record<string,string>>({});const slug=(v:string)=>/AxiVoice/.test(v)?'axivoice':/AxiDoc/.test(v)?'axidoc':/AxiCore/.test(v)?'axicore':/AxiSolve/.test(v)?'custom-ai':/Partnership/.test(v)?'general':'engagement';const [topic,setTopic]=useState(slug(interest)),[prevInterest,setPrevInterest]=useState(interest);if(prevInterest!==interest){setPrevInterest(interest);setTopic(slug(interest));}
-async function submit(e:FormEvent<HTMLFormElement>){e.preventDefault();const form=e.currentTarget;const data=Object.fromEntries(new FormData(form));const issues:Record<string,string>={};if(String(data.name||'').trim().length<2)issues.name='Please enter your name (at least 2 characters).';if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.email||'')))issues.email='Please enter a valid email address.';if(String(data.message||'').trim().length<20)issues.message='Tell us a little more (at least 20 characters).';if(!data.consent)issues.consent='Please agree so we can respond to your enquiry.';setErrors(issues);if(Object.keys(issues).length){(form.querySelector(`[name="${Object.keys(issues)[0]}"]`) as HTMLElement)?.focus();return;}setState('sending');try{const response=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});if(!response.ok)throw new Error();setState('success');form.reset();}catch{setState('error');}}
-if(state==='success')return <div className="form-success" role="status"><div className="success-badge" aria-hidden="true"><span className="ring r1"/><span className="ring r2"/><svg viewBox="0 0 52 52"><circle className="sc" cx="26" cy="26" r="23"/><path className="st" d="M15 27l8 8 14-16"/></svg></div><h3>Thank you — we’ve got it!</h3><p>Our team will reach out to you shortly.</p><button className="btn secondary" onClick={()=>setState('idle')}>Send another enquiry <ArrowRight size={17}/></button></div>;
-return <form onSubmit={submit} noValidate className="contact-form"><div className="form-row">{['name','email'].map(name=><div className="field" key={name}><label htmlFor={name}>{name==='name'?'Your name':'Business email'} <span>*</span></label><input id={name} name={name} type={name==='email'?'email':'text'} autoComplete={name} maxLength={name==='name'?100:254} placeholder={name==='name'?'Alex Morgan':'alex@company.com'} required aria-invalid={!!errors[name]} aria-describedby={errors[name]?name+'-error':undefined}/>{errors[name]&&<small id={name+'-error'} className="error">{errors[name]}</small>}</div>)}</div><div className="form-row"><div className="field"><label htmlFor="company">Company <span className="opt">(optional)</span></label><input id="company" name="company" type="text" autoComplete="organization" maxLength={150}/></div><div className="field"><label htmlFor="interest">What are you interested in?</label><select id="interest" name="interest" value={topic} onChange={e=>setTopic(e.target.value)}><option value="general">General enquiry / partnership</option><option value="custom-ai">AxiSolve — Custom AI solution</option><option value="axivoice">AxiVoice</option><option value="axidoc">AxiDoc</option><option value="axicore">AxiCore</option><option value="engagement">Engagement / pilot</option></select></div></div><div className="field"><label htmlFor="message">What would you like to solve? <span>*</span></label><textarea id="message" name="message" rows={5} minLength={20} maxLength={5000} placeholder="A workflow, a set of documents, a system to integrate, or an idea you want to test…" required aria-invalid={!!errors.message} aria-describedby={errors.message?'message-error':undefined}/>{errors.message&&<small id="message-error" className="error">{errors.message}</small>}</div><div className="form-row"><div className="field"><label htmlFor="budget">Budget range <span className="opt">(optional)</span></label><select id="budget" name="budget" defaultValue=""><option value="">Prefer not to say</option><option value="under-5k">Under $5k</option><option value="5k-15k">$5k – $15k</option><option value="15k-50k">$15k – $50k</option><option value="50k-plus">$50k+</option></select></div><div className="field"><label htmlFor="timeline">Timeline <span className="opt">(optional)</span></label><select id="timeline" name="timeline" defaultValue=""><option value="">Prefer not to say</option><option value="asap">As soon as possible</option><option value="1-3-months">1–3 months</option><option value="3-6-months">3–6 months</option><option value="exploring">Just exploring</option></select></div></div><div className="honeypot" aria-hidden="true"><label htmlFor="website">Website</label><input id="website" name="website" tabIndex={-1} autoComplete="off"/></div><label className="consent"><input type="checkbox" name="consent" aria-invalid={!!errors.consent} aria-describedby={errors.consent?'consent-error':undefined}/><span>I agree that Axilabz may store my enquiry and use these details to respond to me.</span></label>{errors.consent&&<small id="consent-error" className="error">{errors.consent}</small>}<button className="btn primary" disabled={state==='sending'} type="submit">{state==='sending'?<><Loader2 size={17} className="spin"/>Sending your enquiry…</>:<>Send enquiry <ArrowUpRight size={18}/></>}</button><div role="status" aria-live="polite">{state==='error'&&<p className="error">We couldn’t send your enquiry. Your details are still here. Please try again in a moment.</p>}</div><p className="form-note"><ShieldCheck size={14}/>Your ideas stay between us.</p></form>}
+const productConfigs: Record<string, {
+  title: string;
+  eyebrow: string;
+  subtitle: string;
+  messageLabel: string;
+  messagePlaceholder: string;
+  specificField?: {
+    name: string;
+    label: string;
+    options: { value: string; label: string }[];
+  };
+}> = {
+  'axicore': {
+    title: 'Discuss AxiCore',
+    eyebrow: 'AI AGENT WORKSPACE',
+    subtitle: 'Tell us about your team size, internal tools, and the bot workflows you want to govern.',
+    messageLabel: 'What bot workflows or agent capabilities are you planning? *',
+    messagePlaceholder: 'e.g. Employee self-service bots, tool permissions, connected workflows with Slack/Teams or internal APIs...',
+    specificField: {
+      name: 'teamSize',
+      label: 'Estimated users / team size (optional)',
+      options: [
+        { value: '', label: 'Select team size' },
+        { value: '1-20', label: '1 – 20 team members' },
+        { value: '20-100', label: '20 – 100 team members' },
+        { value: '100-500', label: '100 – 500 team members' },
+        { value: '500+', label: '500+ enterprise users' },
+      ],
+    },
+  },
+  'axivoice': {
+    title: 'Discuss AxiVoice',
+    eyebrow: 'CONVERSATION INTELLIGENCE',
+    subtitle: 'Tell us about your audio streams, meeting platforms, and summarisation requirements.',
+    messageLabel: 'What are your voice/meeting intelligence requirements? *',
+    messagePlaceholder: 'e.g. Real-time transcription, automated meeting minutes, multilingual audio, CRM synchronization...',
+    specificField: {
+      name: 'voiceVolume',
+      label: 'Expected audio volume / frequency (optional)',
+      options: [
+        { value: '', label: 'Select volume' },
+        { value: 'occasional', label: 'A few meetings / week' },
+        { value: 'daily', label: 'Daily team & client meetings' },
+        { value: 'high-volume', label: 'Continuous / call center volume' },
+      ],
+    },
+  },
+  'axidoc': {
+    title: 'Discuss AxiDoc',
+    eyebrow: 'DOCUMENT INTELLIGENCE',
+    subtitle: 'Tell us about your document formats, extraction volumes, and downstream integrations.',
+    messageLabel: 'What documents and extraction workflows do you have? *',
+    messagePlaceholder: 'e.g. Invoices, contracts, scanned PDFs, structured JSON output, review workflows...',
+    specificField: {
+      name: 'docVolume',
+      label: 'Monthly document volume (optional)',
+      options: [
+        { value: '', label: 'Select estimated volume' },
+        { value: 'under-1k', label: 'Under 1,000 pages / month' },
+        { value: '1k-10k', label: '1,000 – 10,000 pages / month' },
+        { value: '10k-100k', label: '10,000 – 100,000 pages / month' },
+        { value: '100k+', label: '100,000+ pages / month' },
+      ],
+    },
+  },
+  'custom-ai': {
+    title: 'AxiSolve — Custom AI Solution',
+    eyebrow: 'CUSTOM AI ENGINEERING',
+    subtitle: 'From a technical question to production deployment. Let us know what you want to build.',
+    messageLabel: 'What would you like to solve? *',
+    messagePlaceholder: 'A workflow, a set of documents, a system to integrate, or an idea you want to test...',
+  },
+  'engagement': {
+    title: 'Discuss an Engagement',
+    eyebrow: 'TECHNICAL COLLABORATION',
+    subtitle: 'Choose an initial sprint, proof of concept, or engineering consultation.',
+    messageLabel: 'What would you like to solve? *',
+    messagePlaceholder: 'Tell us about your current systems, constraints, and target outcomes...',
+  },
+  'general': {
+    title: 'Start a Conversation',
+    eyebrow: 'GENERAL ENQUIRY',
+    subtitle: 'Share a little context. We’ll use it to start the discussion.',
+    messageLabel: 'How can we help? *',
+    messagePlaceholder: 'Tell us what you have in mind...',
+  },
+};
+
+function ContactForm({interest}:{interest:string}){
+  const [state,setState]=useState<'idle'|'sending'|'success'|'error'>('idle');
+  const [errors,setErrors]=useState<Record<string,string>>({});
+  const slug=(v:string)=>/AxiVoice/i.test(v)?'axivoice':/AxiDoc/i.test(v)?'axidoc':/AxiCore/i.test(v)?'axicore':/AxiSolve|Custom/i.test(v)?'custom-ai':/Partnership/i.test(v)?'general':'engagement';
+  const [topic,setTopic]=useState(slug(interest)),[prevInterest,setPrevInterest]=useState(interest);
+  if(prevInterest!==interest){setPrevInterest(interest);setTopic(slug(interest));}
+
+  const currentConfig = productConfigs[topic] || productConfigs['general'];
+
+  async function submit(e:FormEvent<HTMLFormElement>){
+    e.preventDefault();
+    const form=e.currentTarget;
+    const data=Object.fromEntries(new FormData(form));
+    const issues:Record<string,string>={};
+    if(String(data.name||'').trim().length<2)issues.name='Please enter your name (at least 2 characters).';
+    if(!/^[^s@]+@[^s@]+.[^s@]+$/.test(String(data.email||'')))issues.email='Please enter a valid email address.';
+    if(String(data.message||'').trim().length<20)issues.message='Tell us a little more (at least 20 characters).';
+    if(!data.consent)issues.consent='Please agree so we can respond to your enquiry.';
+    setErrors(issues);
+    if(Object.keys(issues).length){(form.querySelector(`[name="${Object.keys(issues)[0]}"]`) as HTMLElement)?.focus();return;}
+    setState('sending');
+    try{
+      const response=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      if(!response.ok)throw new Error();
+      setState('success');
+      form.reset();
+    }catch{
+      setState('error');
+    }
+  }
+
+  if(state==='success')return <div className="form-success" role="status"><div className="success-badge" aria-hidden="true"><span className="ring r1"/><span className="ring r2"/><svg viewBox="0 0 52 52"><circle className="sc" cx="26" cy="26" r="23"/><path className="st" d="M15 27l8 8 14-16"/></svg></div><h3>Thank you — we’ve got it!</h3><p>Our team will reach out to you shortly.</p><button className="btn secondary" onClick={()=>setState('idle')}>Send another enquiry <ArrowRight size={17}/></button></div>;
+
+  return (
+    <form onSubmit={submit} noValidate className="contact-form">
+      <div className="form-row">
+        {['name','email'].map(name=>(
+          <div className="field" key={name}>
+            <label htmlFor={name}>{name==='name'?'Your name':'Business email'} <span>*</span></label>
+            <input id={name} name={name} type={name==='email'?'email':'text'} autoComplete={name} maxLength={name==='name'?100:254} placeholder={name==='name'?'Alex Morgan':'alex@company.com'} required aria-invalid={!!errors[name]} aria-describedby={errors[name]?name+'-error':undefined}/>
+            {errors[name]&&<small id={name+'-error'} className="error">{errors[name]}</small>}
+          </div>
+        ))}
+      </div>
+      <div className="form-row">
+        <div className="field">
+          <label htmlFor="company">Company <span className="opt">(optional)</span></label>
+          <input id="company" name="company" type="text" autoComplete="organization" maxLength={150} placeholder="Acme Corp"/>
+        </div>
+        <div className="field">
+          <label htmlFor="interest">What are you interested in?</label>
+          <select id="interest" name="interest" value={topic} onChange={e=>setTopic(e.target.value)}>
+            <option value="axicore">AxiCore — AI Agent Workspace</option>
+            <option value="axivoice">AxiVoice — Conversation Intelligence</option>
+            <option value="axidoc">AxiDoc — Document Intelligence</option>
+            <option value="custom-ai">AxiSolve — Custom AI Solution</option>
+            <option value="engagement">Engagement / Pilot Sprints</option>
+            <option value="general">General enquiry / Partnership</option>
+          </select>
+        </div>
+      </div>
+
+      {currentConfig.specificField && (
+        <div className="field">
+          <label htmlFor={currentConfig.specificField.name}>{currentConfig.specificField.label}</label>
+          <select id={currentConfig.specificField.name} name={currentConfig.specificField.name} defaultValue="">
+            {currentConfig.specificField.options?.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      <div className="field">
+        <label htmlFor="message">{currentConfig.messageLabel}</label>
+        <textarea id="message" name="message" rows={5} minLength={20} maxLength={5000} placeholder={currentConfig.messagePlaceholder} required aria-invalid={!!errors.message} aria-describedby={errors.message?'message-error':undefined}/>
+        {errors.message&&<small id="message-error" className="error">{errors.message}</small>}
+      </div>
+
+      <div className="form-row">
+        <div className="field">
+          <label htmlFor="budget">Budget range <span className="opt">(optional)</span></label>
+          <select id="budget" name="budget" defaultValue="">
+            <option value="">Prefer not to say</option>
+            <option value="under-5k">Under $5k</option>
+            <option value="5k-15k">$5k – $15k</option>
+            <option value="15k-50k">$15k – $50k</option>
+            <option value="50k-plus">$50k+</option>
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor="timeline">Timeline <span className="opt">(optional)</span></label>
+          <select id="timeline" name="timeline" defaultValue="">
+            <option value="">Prefer not to say</option>
+            <option value="asap">As soon as possible</option>
+            <option value="1-3-months">1–3 months</option>
+            <option value="3-6-months">3–6 months</option>
+            <option value="exploring">Just exploring</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="honeypot" aria-hidden="true"><label htmlFor="website">Website</label><input id="website" name="website" tabIndex={-1} autoComplete="off"/></div>
+      <label className="consent">
+        <input type="checkbox" name="consent" aria-invalid={!!errors.consent} aria-describedby={errors.consent?'consent-error':undefined}/>
+        <span>I agree that Axilabz may store my enquiry and use these details to respond to me.</span>
+      </label>
+      {errors.consent&&<small id="consent-error" className="error">{errors.consent}</small>}
+      <button className="btn primary" disabled={state==='sending'} type="submit">
+        {state==='sending'?<><Loader2 size={17} className="spin"/>Sending your enquiry…</>:<>Send enquiry <ArrowUpRight size={18}/></>}
+      </button>
+      <div role="status" aria-live="polite">
+        {state==='error'&&<p className="error">We couldn’t send your enquiry. Your details are still here. Please try again in a moment.</p>}
+      </div>
+      <p className="form-note"><ShieldCheck size={14}/>Your ideas stay between us.</p>
+    </form>
+  );
+}
 export default function Home(){
 const [selected,setSelected]=useState(0),[menu,setMenu]=useState(false),[interest,setInterest]=useState('AxiSolve — Custom AI solution'),[product,setProduct]=useState<string|null>(null);
 const contactRef=useRef<HTMLDialogElement>(null),productRef=useRef<HTMLDialogElement>(null);
 useEffect(()=>{if(product)productRef.current?.showModal();},[product]);useEffect(()=>{if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;const t=setTimeout(()=>setSelected(v=>(v+1)%engagements.length),5000);return()=>clearTimeout(t);},[selected]);useEffect(()=>{const b=document.getElementById('offer-'+selected);const p=b?.parentElement;if(b&&p&&p.scrollWidth>p.clientWidth)p.scrollTo({left:b.offsetLeft-12,behavior:'smooth'});},[selected]);useEffect(()=>{const h=document.querySelector('header');const f=()=>h?.classList.toggle('stuck',window.scrollY>0);f();window.addEventListener('scroll',f,{passive:true});return()=>window.removeEventListener('scroll',f);},[]);
 function enquire(topic:string){productRef.current?.close();setProduct(null);setInterest(topic);contactRef.current?.showModal();}
-function handleClick(e:MouseEvent<HTMLDivElement>){const el=e.target as Element;const c=el.closest<HTMLElement>('[data-contact]');if(c)enquire(c.dataset.contact==='Let’s discuss your project'?'AxiSolve — Custom AI solution':c.dataset.contact==='Help me choose an engagement'?'AxiSolve — Custom AI solution':c.dataset.contact||'AxiSolve — Custom AI solution');const p=el.closest<HTMLElement>('[data-product]');if(p)setProduct(p.dataset.product||null);if(el.closest('#navigation a'))setMenu(false);}
+function handleClick(e:MouseEvent<HTMLDivElement>){const el=e.target as Element;const c=el.closest<HTMLElement>('[data-contact]');if(c)enquire(c.dataset.contact==='Let’s discuss your project'?'AxiSolve — Custom AI solution':c.dataset.contact==='Help me choose an engagement'?'AxiSolve — Custom AI solution':c.dataset.contact||'AxiSolve — Custom AI solution');const p=el.closest<HTMLElement>('[data-product]');if(p)enquire(p.dataset.product+' — Product enquiry');if(el.closest('#navigation a'))setMenu(false);}
+const activeConfig = productConfigs[/AxiVoice/i.test(interest)?'axivoice':/AxiDoc/i.test(interest)?'axidoc':/AxiCore/i.test(interest)?'axicore':/AxiSolve|Custom/i.test(interest)?'custom-ai':/Partnership/i.test(interest)?'general':'engagement'] || productConfigs['general'];
 return <div onClick={handleClick}><a href="#main" className="skip-link">Skip to content</a><header><a className="brand" href="#home" aria-label="Axilabz home"><img src="/brand/axilabz-logo.png" alt="Axilabz — Accelerating Xcellence Innovation" width="1200" height="348"/></a><nav className={menu?"visible":""} id="navigation" aria-label="Main navigation"><a href="#engagements">Ways to work with us</a><a href="#expertise">Expertise</a><a href="#products">Products</a><a href="#approach">Our approach</a></nav><button className="btn primary nav-cta" data-contact="Let’s discuss your project">Let’s talk <Glyph name="arrow-up-right"/></button><button className="menu icon" aria-label={menu?"Close navigation":"Open navigation"} aria-expanded={menu} aria-controls="navigation" onClick={()=>setMenu(!menu)}><Glyph name="menu"/></button></header>
 <main id="main"><section className="hero wrap" id="home"><div className="hero-copy"><p className="eyebrow"><span></span> YOUR AI ENGINEERING PARTNER</p><h1>AI that works<span className="dot">.</span><br/>A clear way<br/>to <em>start</em><span className="dot">.</span></h1><p className="hero-description">From the first technical question to a working solution. We help you build, connect and improve AI—with a focused scope and a useful outcome.</p><div className="hero-actions"><a className="btn primary" href="#engagements">Find your starting point <Glyph name="arrow-right"/></a><button className="btn text" data-contact="Let’s discuss your project">Talk through your idea <Glyph name="arrow-up-right"/></button></div><p className="hero-foot"><Glyph name="check-circle"/> Start focused. Prove the value. Build from there.</p></div><div className="hero-art"><img src="/axi-hero-full.webp" alt="Architectural AXI letters filled with a connected city skyline at dusk, with the tag From idea to impact." width="1774" height="887"/></div></section>
 <div className="capability-strip wrap"><span>One partner.<br/><strong>From question to delivery.</strong></span><div><Glyph name="compass"/> Assess & plan</div><div><Glyph name="code"/> Build & integrate</div><div><Glyph name="activity"/> Test & improve</div><div><Glyph name="cloud"/> Deploy & operate</div></div>
@@ -25,6 +228,6 @@ return <div onClick={handleClick}><a href="#main" className="skip-link">Skip to 
 <section className="faq wrap"><div><p className="eyebrow"><span></span> A FEW THINGS TO KNOW</p><h2>Before we start<span className="dot">.</span></h2></div><div className="faq-list"><details><summary>Can we start if we only have an idea?<Glyph name="plus"/></summary><p>Yes. Start with a discovery conversation. We’ll help identify what needs to be clarified and whether an assessment, prototype or integration is a useful next step.</p></details><details><summary>Do you work with existing applications?<Glyph name="plus"/></summary><p>Yes. We can discuss reviewing, integrating or improving an existing application. Access, technology fit and ownership responsibilities are agreed during scoping.</p></details><details><summary>How are timelines and pricing decided?<Glyph name="plus"/></summary><p>We agree both after understanding the work, dependencies and success criteria. The engagements on this page are starting points, not fixed quotes or guaranteed schedules.</p></details><details><summary>Should we train a model or improve the system?<Glyph name="plus"/></summary><p>We start with the failure and evaluate the options. Better data, retrieval, tools or evaluation may help; fine-tuning is considered when it fits the problem and evidence.</p></details></div></section>
 <section className="contact-band wrap"><div><p className="eyebrow">LET’S FIND YOUR FIRST STEP</p><h2>A challenge<span className="dot">.</span> An idea<span className="dot">.</span><br/>A better way of working<span className="dot">.</span></h2><p>Tell us what you’re trying to achieve.<br/>We’ll work out a sensible place to start.</p></div><button className="btn light" data-contact="Let’s discuss your project">Start a conversation <Glyph name="arrow-up-right"/></button><img className="contact-mark" src="/brand/axilabz-mark.png" alt="" aria-hidden="true" width="400" height="284"/></section>
 </main><footer className="wrap"><a className="brand" href="#home"><img src="/brand/axilabz-logo.png" alt="Axilabz — Accelerating Xcellence Innovation" width="1200" height="348"/></a><p>AI products. Engineering services.<br/>Ideas made useful.</p><div><p className="footer-address">India &bull; Australia</p><div className="socials"><a className="s-wa" href="https://wa.me/916382266191" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a><a className="s-mail" href="mailto:axilabzoffl@gmail.com" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="M3 7l9 6.5L21 7"/></svg></a><a className="s-ig" href="https://www.instagram.com/axilabz/" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg></a><a className="s-in" href="https://www.linkedin.com/company/axilabz" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a><a className="s-x" href="https://x.com/Axilabz" aria-label="X" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></a></div><small>© 2026 Axilabz</small></div></footer>
-<dialog ref={contactRef} id="contact-dialog" onCancel={()=>contactRef.current?.close()}><button className="icon close" aria-label="Close enquiry" onClick={()=>contactRef.current?.close()}><X/></button><p className="eyebrow">START A CONVERSATION</p><h2>What are you working on?</h2><p>Share a little context. We’ll use it to start the discussion.</p><ContactForm interest={interest}/></dialog>
+<dialog ref={contactRef} id="contact-dialog" onCancel={()=>contactRef.current?.close()}><button className="icon close" aria-label="Close enquiry" onClick={()=>contactRef.current?.close()}><X/></button><p className="eyebrow">{activeConfig.eyebrow}</p><h2>{activeConfig.title}</h2><p>{activeConfig.subtitle}</p><ContactForm interest={interest}/></dialog>
 <dialog ref={productRef} id="product-dialog" onCancel={()=>setProduct(null)}><button className="icon close" aria-label="Close product details" onClick={()=>{productRef.current?.close();setProduct(null)}}><X/></button><p className="eyebrow">PRODUCTS BY AXILABZ</p><h2>{product}</h2><p>{product==='AxiCore'?'A governed employee bot workspace with organisation access, model configuration and an Atlas-to-AxiCode workflow.':product==='AxiVoice'?'Discuss transcription, summaries and meeting intelligence for your team, including integrations and product availability.':'Discuss extraction and structured workflows for your documents, formats, volume and review requirements.'}</p><div id="product-actions"><button className="btn primary" onClick={()=>enquire(product+' — Product enquiry')}>Discuss product fit <ArrowRight/></button></div></dialog>
 </div>;}
