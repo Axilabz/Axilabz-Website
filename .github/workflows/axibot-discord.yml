@@ -65,7 +65,7 @@ jobs:
                   'Authorization': 'Bearer ' + identity,
                   'Content-Type': 'application/json',
                   'Accept': 'application/json',
-                  'User-Agent': 'AxiBot-GitHub-Notifications/1.0 (+https://github.com/JohnSathya1999/axilabz-website)',
+                  'User-Agent': 'AxiBot-GitHub-Notifications/1.0 (+https://github.com/Axilabz/Axilabz-Website)',
               })
           try:
               with urllib.request.urlopen(request, timeout=90) as response:
