@@ -9,86 +9,56 @@ const productConfigs: Record<string, {
   title: string;
   eyebrow: string;
   subtitle: string;
+  label: string;
   messageLabel: string;
   messagePlaceholder: string;
-  specificField?: {
-    name: string;
-    label: string;
-    options: { value: string; label: string }[];
-  };
 }> = {
   'axicore': {
     title: 'Discuss AxiCore',
     eyebrow: 'AI AGENT WORKSPACE',
     subtitle: 'Tell us about your team size, internal tools, and the bot workflows you want to govern.',
-    messageLabel: 'What bot workflows or agent capabilities are you planning? *',
-    messagePlaceholder: 'e.g. Employee self-service bots, tool permissions, connected workflows with Slack/Teams or internal APIs...',
-    specificField: {
-      name: 'teamSize',
-      label: 'Estimated users / team size (optional)',
-      options: [
-        { value: '', label: 'Select team size' },
-        { value: '1-20', label: '1 – 20 team members' },
-        { value: '20-100', label: '20 – 100 team members' },
-        { value: '100-500', label: '100 – 500 team members' },
-        { value: '500+', label: '500+ enterprise users' },
-      ],
-    },
+    label: 'AxiCore — AI Agent Workspace',
+    messageLabel: 'Description *',
+    messagePlaceholder: 'Tell us about the bot workflows, tool integrations, or agent capabilities you want to test or govern...',
   },
   'axivoice': {
     title: 'Discuss AxiVoice',
     eyebrow: 'CONVERSATION INTELLIGENCE',
     subtitle: 'Tell us about your audio streams, meeting platforms, and summarisation requirements.',
-    messageLabel: 'What are your voice/meeting intelligence requirements? *',
-    messagePlaceholder: 'e.g. Real-time transcription, automated meeting minutes, multilingual audio, CRM synchronization...',
-    specificField: {
-      name: 'voiceVolume',
-      label: 'Expected audio volume / frequency (optional)',
-      options: [
-        { value: '', label: 'Select volume' },
-        { value: 'occasional', label: 'A few meetings / week' },
-        { value: 'daily', label: 'Daily team & client meetings' },
-        { value: 'high-volume', label: 'Continuous / call center volume' },
-      ],
-    },
+    label: 'AxiVoice — Conversation Intelligence',
+    messageLabel: 'Description *',
+    messagePlaceholder: 'Tell us about your audio/meeting transcription, summary needs, or CRM integrations...',
   },
   'axidoc': {
     title: 'Discuss AxiDoc',
     eyebrow: 'DOCUMENT INTELLIGENCE',
     subtitle: 'Tell us about your document formats, extraction volumes, and downstream integrations.',
-    messageLabel: 'What documents and extraction workflows do you have? *',
-    messagePlaceholder: 'e.g. Invoices, contracts, scanned PDFs, structured JSON output, review workflows...',
-    specificField: {
-      name: 'docVolume',
-      label: 'Monthly document volume (optional)',
-      options: [
-        { value: '', label: 'Select estimated volume' },
-        { value: 'under-1k', label: 'Under 1,000 pages / month' },
-        { value: '1k-10k', label: '1,000 – 10,000 pages / month' },
-        { value: '10k-100k', label: '10,000 – 100,000 pages / month' },
-        { value: '100k+', label: '100,000+ pages / month' },
-      ],
-    },
+    label: 'AxiDoc — Document Intelligence',
+    messageLabel: 'Description *',
+    messagePlaceholder: 'Tell us about the documents, extracted fields, volumes, and workflow integration requirements...',
   },
   'custom-ai': {
     title: 'AxiSolve — Custom AI Solution',
     eyebrow: 'CUSTOM AI ENGINEERING',
     subtitle: 'From a technical question to production deployment. Let us know what you want to build.',
-    messageLabel: 'What would you like to solve? *',
+    label: 'AxiSolve — Custom AI Solution',
+    messageLabel: 'Description *',
     messagePlaceholder: 'A workflow, a set of documents, a system to integrate, or an idea you want to test...',
   },
   'engagement': {
     title: 'Discuss an Engagement',
     eyebrow: 'TECHNICAL COLLABORATION',
     subtitle: 'Choose an initial sprint, proof of concept, or engineering consultation.',
-    messageLabel: 'What would you like to solve? *',
+    label: 'Engagement / Pilot Sprints',
+    messageLabel: 'Description *',
     messagePlaceholder: 'Tell us about your current systems, constraints, and target outcomes...',
   },
   'general': {
     title: 'Start a Conversation',
     eyebrow: 'GENERAL ENQUIRY',
     subtitle: 'Share a little context. We’ll use it to start the discussion.',
-    messageLabel: 'How can we help? *',
+    label: 'General enquiry / Partnership',
+    messageLabel: 'Description *',
     messagePlaceholder: 'Tell us what you have in mind...',
   },
 };
@@ -97,9 +67,7 @@ function ContactForm({interest}:{interest:string}){
   const [state,setState]=useState<'idle'|'sending'|'success'|'error'>('idle');
   const [errors,setErrors]=useState<Record<string,string>>({});
   const slug=(v:string)=>/AxiVoice/i.test(v)?'axivoice':/AxiDoc/i.test(v)?'axidoc':/AxiCore/i.test(v)?'axicore':/AxiSolve|Custom/i.test(v)?'custom-ai':/Partnership/i.test(v)?'general':'engagement';
-  const [topic,setTopic]=useState(slug(interest)),[prevInterest,setPrevInterest]=useState(interest);
-  if(prevInterest!==interest){setPrevInterest(interest);setTopic(slug(interest));}
-
+  const topic = slug(interest);
   const currentConfig = productConfigs[topic] || productConfigs['general'];
 
   async function submit(e:FormEvent<HTMLFormElement>){
@@ -108,8 +76,8 @@ function ContactForm({interest}:{interest:string}){
     const data=Object.fromEntries(new FormData(form));
     const issues:Record<string,string>={};
     if(String(data.name||'').trim().length<2)issues.name='Please enter your name (at least 2 characters).';
-    if(!/^[^s@]+@[^s@]+.[^s@]+$/.test(String(data.email||'')))issues.email='Please enter a valid email address.';
-    if(String(data.message||'').trim().length<20)issues.message='Tell us a little more (at least 20 characters).';
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(data.email||'')))issues.email='Please enter a valid email address.';
+    if(String(data.message||'').trim().length<20)issues.message='Tell us a little more in the description (at least 20 characters).';
     if(!data.consent)issues.consent='Please agree so we can respond to your enquiry.';
     setErrors(issues);
     if(Object.keys(issues).length){(form.querySelector(`[name="${Object.keys(issues)[0]}"]`) as HTMLElement)?.focus();return;}
@@ -139,60 +107,27 @@ function ContactForm({interest}:{interest:string}){
       </div>
       <div className="form-row">
         <div className="field">
-          <label htmlFor="company">Company <span className="opt">(optional)</span></label>
+          <label htmlFor="company">Company name <span className="opt">(optional)</span></label>
           <input id="company" name="company" type="text" autoComplete="organization" maxLength={150} placeholder="Acme Corp"/>
         </div>
         <div className="field">
           <label htmlFor="interest">What are you interested in?</label>
-          <select id="interest" name="interest" value={topic} onChange={e=>setTopic(e.target.value)}>
-            <option value="axicore">AxiCore — AI Agent Workspace</option>
-            <option value="axivoice">AxiVoice — Conversation Intelligence</option>
-            <option value="axidoc">AxiDoc — Document Intelligence</option>
-            <option value="custom-ai">AxiSolve — Custom AI Solution</option>
-            <option value="engagement">Engagement / Pilot Sprints</option>
-            <option value="general">General enquiry / Partnership</option>
-          </select>
+          <input type="hidden" name="interest" value={topic} />
+          <input
+            id="interest"
+            type="text"
+            readOnly
+            disabled
+            value={currentConfig.label}
+            style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed', color: '#374151', opacity: 0.95 }}
+          />
         </div>
       </div>
-
-      {currentConfig.specificField && (
-        <div className="field">
-          <label htmlFor={currentConfig.specificField.name}>{currentConfig.specificField.label}</label>
-          <select id={currentConfig.specificField.name} name={currentConfig.specificField.name} defaultValue="">
-            {currentConfig.specificField.options?.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </div>
-      )}
 
       <div className="field">
         <label htmlFor="message">{currentConfig.messageLabel}</label>
         <textarea id="message" name="message" rows={5} minLength={20} maxLength={5000} placeholder={currentConfig.messagePlaceholder} required aria-invalid={!!errors.message} aria-describedby={errors.message?'message-error':undefined}/>
         {errors.message&&<small id="message-error" className="error">{errors.message}</small>}
-      </div>
-
-      <div className="form-row">
-        <div className="field">
-          <label htmlFor="budget">Budget range <span className="opt">(optional)</span></label>
-          <select id="budget" name="budget" defaultValue="">
-            <option value="">Prefer not to say</option>
-            <option value="under-5k">Under $5k</option>
-            <option value="5k-15k">$5k – $15k</option>
-            <option value="15k-50k">$15k – $50k</option>
-            <option value="50k-plus">$50k+</option>
-          </select>
-        </div>
-        <div className="field">
-          <label htmlFor="timeline">Timeline <span className="opt">(optional)</span></label>
-          <select id="timeline" name="timeline" defaultValue="">
-            <option value="">Prefer not to say</option>
-            <option value="asap">As soon as possible</option>
-            <option value="1-3-months">1–3 months</option>
-            <option value="3-6-months">3–6 months</option>
-            <option value="exploring">Just exploring</option>
-          </select>
-        </div>
       </div>
 
       <div className="honeypot" aria-hidden="true"><label htmlFor="website">Website</label><input id="website" name="website" tabIndex={-1} autoComplete="off"/></div>
