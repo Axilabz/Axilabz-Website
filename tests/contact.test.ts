@@ -183,9 +183,9 @@ test('validation accepts optional fields and rejects unknown option values', () 
 test('mail sender returns undefined without config and throws on provider error', async () => {
   assert.equal(createMailSender({}), undefined);
   const ok = createMailSender({ apiKey: 'k', from: 'a@b.c', to: 'x@y.z' }, (async () => new Response('{}', { status: 200 })) as typeof fetch);
-  await ok!({ subject: 's', text: 't', replyTo: 'r@r.r' });
+  await ok!({ subject: 's', text: 't', html: '', replyTo: 'r@r.r' });
   const bad = createMailSender({ apiKey: 'k', from: 'a@b.c', to: 'x@y.z' }, (async () => new Response('no', { status: 500 })) as typeof fetch);
-  await assert.rejects(() => bad!({ subject: 's', text: 't', replyTo: 'r@r.r' }));
+  await assert.rejects(() => bad!({ subject: 's', text: 't', html: '', replyTo: 'r@r.r' }));
 });
 
 test('enquiries are emailed to axilabzoffl@gmail.com by default, and CONTACT_NOTIFY_TO overrides it', async () => {
@@ -193,11 +193,11 @@ test('enquiries are emailed to axilabzoffl@gmail.com by default, and CONTACT_NOT
   const bodies: { to: string[]; reply_to: string; subject: string; text: string }[] = [];
   const spy = (async (_url: string, init: RequestInit) => { bodies.push(JSON.parse(String(init.body))); return new Response('{}', { status: 200 }); }) as unknown as typeof fetch;
   const send = createMailSender({ apiKey: 'k', from: 'Axilabz <noreply@example.com>' }, spy)!;
-  await send({ subject: 'New enquiry', text: 'Name: A', replyTo: 'visitor@example.com' });
+  await send({ subject: 'New enquiry', text: 'Name: A', html: '', replyTo: 'visitor@example.com' });
   assert.deepEqual(bodies[0].to, ['axilabzoffl@gmail.com']);
   assert.equal(bodies[0].reply_to, 'visitor@example.com');
   const other = createMailSender({ apiKey: 'k', from: 'x@y.z', to: 'a@b.c, d@e.f' }, spy)!;
-  await other({ subject: 's', text: 't', replyTo: 'r@r.r' });
+  await other({ subject: 's', text: 't', html: '', replyTo: 'r@r.r' });
   assert.deepEqual(bodies[1].to, ['a@b.c', 'd@e.f']);
 });
 
